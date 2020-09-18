@@ -1,0 +1,8 @@
+/usr/bin/time -f "%Uu %Ss %E" ./returnglobal 100000000 10000 1003
+
+/usr/bin/time -f "%Uu% Ss %E" ./exception 100000000 10000 1003
+
+./returnglobal 100000000 10000 1003 && ./exception 100000000 10000 1003
+
+
+./returntype 100000000 10000 1003 && ./exception 100000000 10000 1003
