@@ -12,7 +12,7 @@ using namespace std;
 
 struct E {};                                            // exception type
 long int eperiod = 100, excepts = 0, calls = 0, dtors = 0; // counters
-PRT( struct T { ~T() { cout << "~"; } }; )
+PRT( struct T { ~T() { dtors += 1; } }; )
 
 long int Ackermann( long int m, long int n ) {
     calls += 1;

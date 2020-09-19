@@ -17,26 +17,30 @@ PRT( struct T { ~T() { dtors += 1; } }; )
 
 long int Ackermann( long int m, long int n ) {
     calls += 1;
-    jmp_buf localEnv;
-    memcpy(localEnv, env, sizeof(jmp_buf));
+    jmp_buf localEnv; memcpy(localEnv, env, sizeof(env)); // backup stackframe from before Ackername was called
     if ( m == 0 ) {
-        if ( rand() % eperiod <= 2 ) { PRT( T t; ) excepts += 1; longjmp(env, 1); } // replace
+        if ( rand() % eperiod <= 2 ) { PRT( T t; ) excepts += 1; longjmp(env, 1); }
         return n + 1;
     } else if ( n == 0 ) {
         if (setjmp(env) != 0) {
             PRT( cout << "E1 " << m << " " << n );
+            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe before possible longjmp
             if ( rand() % eperiod <= 1 ) { PRT( T t; ) excepts += 1; longjmp(env, 1); }
         } else {
-            Ackermann(m-1, 1);
-            memcpy(env, localEnv, sizeof(jmp_buf));
+            long int result = Ackermann(m-1, 1);
+            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe
+            return result;
         } // if
     	PRT( cout << " E1X " << m << " " << n << endl );
     } else {
-        if (setjmp(env) == 0) {
-            return Ackermann( m - 1, Ackermann( m, n - 1 ) );
-        } else { // replace
+        if (setjmp(env) != 0) {
             PRT( cout << "E2 " << m << " " << n );
+            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe before possible longjmp
             if ( rand() % eperiod == 0 ) { PRT( T t; ) excepts += 1; longjmp(env, 1); }
+        } else { // replace
+            int result = Ackermann( m - 1, Ackermann( m, n - 1 ));
+            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe
+            return result;
         } // if 
 		PRT( cout << endl << " E2X " << m << " " << n << endl );
     } // if
