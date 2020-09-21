@@ -16,6 +16,7 @@ void IntegerLiteral::main() {
 
   // If first digit is 0 look at second character to determine if integer is octal or hex
   if (ch == '0') {
+    // neither leading 0 nor 0x is counted as digits
     suspend();
     if (toupper(ch) == 'X') {
       tag = IntegerType::HEXADECIMAL;
