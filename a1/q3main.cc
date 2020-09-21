@@ -54,5 +54,6 @@ int main( int argc, char * argv[] ) {
     cout << endl;
   }
   finished:;
+  if (input != &cin) delete input;
   return 0;
 }
