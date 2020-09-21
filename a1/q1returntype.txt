@@ -1,0 +1,76 @@
+i.
+BENCHMARK returnglobal (without compiler optimization):
+./returnglobal 100000000 10000 1003
+3.96u 0.00s 0:03.97
+./exception 100000000 10000 1003
+4.03u 0.00s 0:04.03
+./returnglobal 100000000 10000 1003
+3.92u 0.00s 0:03.93
+./exception 100000000 10000 1003
+3.95u 0.01s 0:03.97
+
+./returnglobal 1000000000 10000 1003
+36.92u 0.00s 0:36.93
+./exception 1000000000 10000 1003
+38.03u 0.00s 0:38.03
+./returnglobal 1000000000 10000 1003
+36.83u 0.00s 0:36.84
+./exception 1000000000 10000 1003
+38.38u 0.00s 0:38.39
+
+./returnglobal 2000000001 10000 1003
+77.44u 0.24s 1:17.92
+./exception 2000000001 10000 1003
+77.96u 0.17s 1:18.34
+./returnglobal 2000000001 10000 1003
+76.35u 0.27s 1:16.86 
+./exception 2000000001 10000 1003
+76.72u 0.06s 1:16.86
+
+BENCHMARK returntype (without compiler optimization):
+
+./exception 50000000 10000 1003     | ./returntype 50000000 10000 1003
+------------------------------------|--------------------------------- 
+1.76u 0.00s 0:01.76                 |    11.37u 0.00s 0:11.40
+1.81u 0.00s 0:01.81                 |    11.46u 0.00s 0:11.47
+1.77u 0.00s 0:01.77                 |    11.47u 0.00s 0:11.47
+1.72u 0.00s 0:01.72                 |    11.38u 0.00s 0:11.38
+1.73u 0.00s 0:01.73                 |    11.89u 0.00s 0:11.89
+1.79u 0.00s 0:01.80                 |    11.84u 0.00s 0:11.84
+1.77u 0.00s 0:01.77                 |    12.19u 0.00s 0:12.19
+1.72u 0.00s 0:01.72                 |    11.95u 0.00s 0:11.96
+
+BENCHMARK returntypec (without compiler optimization):
+
+./exception 100000000 10000 1003    | ./returntypec 100000000 10000 1003
+------------------------------------|--------------------------------- 
+3.45u 0.00s 0:03.46                 |    3.70u 0.00s 0:03.71 
+3.41u 0.00s 0:03.41                 |    3.72u 0.00s 0:03.72 
+3.38u 0.00s 0:03.38                 |    3.72u 0.00s 0:03.72 
+3.49u 0.00s 0:03.49                 |    3.70u 0.00s 0:03.71 
+3.45u 0.00s 0:03.45                 |    3.74u 0.00s 0:03.74
+3.41u 0.00s 0:03.41                 |    3.72u 0.00s 0:03.72
+3.50u 0.00s 0:03.50                 |    4.01u 0.00s 0:04.01
+3.37u 0.00s 0:03.37                 |    3.72u 0.00s 0:03.72
+
+ii.
+returnglobal:
+Unoptimized
+There is a miniscule performance decrease using returnglobal from the original program. 
+
+returntype:
+Unoptimized
+There is an extreme performance decrease using returntype from the original program.
+This is because returntype uses the template library variant. 
+Templates involves many calls to trivial functions (extra overhead) that slow down the overall performance.
+This makes them easy to optimize but very expensive without.
+
+The above sentiment is proven when
+
+returntypec:
+Unoptimized
+There is a slight performance decrease using returntypec from the original program.
+This is caused by the fact that tagged union is a larger object than Ex1, Ex2, Ex3 and thus takes longer to construct;
+This issue is further compounded by the fact the returntypec returns a tagged union object even when no exception has occured
+adding even more overhead in reading and writing the attributes of tagged union.
+
