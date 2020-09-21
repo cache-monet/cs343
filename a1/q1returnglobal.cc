@@ -28,7 +28,7 @@ double rtn2( double i  ) {
 }
 double rtn3( double i  ) {
     if ( rand() % eperiod == 0 ) {
-        rtn3status = (long int) rand();
+        rtn3status = rand();
         return 0.0;
     }
     return rtn2( i ) + i;

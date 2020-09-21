@@ -1,0 +1,19 @@
+
+ii.
+Benchmarks (unoptimized):
+./throwcatch 12 12 103 40
+56.91u 0.07s 0:56.99
+57.23u 0.03s 0:57.26
+57.02u 0.03s 0:57.05
+56.81u 0.03s 0:56.85
+./longjmp 12 12 103 40
+19.88u 0.00s 0:19.88
+20.08u 0.01s 0:20.10
+19.72u 0.00s 0:19.72
+19.80u 0.00s 0:19.80
+
+iii.
+There is a significant performance increase between the unoptimized transformed program and the original.
+On average the transformed program is 37.1225 seconds faster.
+This is because try/catch needs to search down the stack for each raised exception to find the correct handler.
+The search process is an O(n) operation; n being the number of stackframes.
