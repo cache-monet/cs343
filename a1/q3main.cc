@@ -1,20 +1,35 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include "q3integerliteral.h"														// defination for the Integer Literal interface
 using namespace std;
 
 int main( int argc, char * argv[] ) {
-  cin >> noskipws;
+	istream *input = &cin;
+  try {                                               // process command-line arguments
+    switch ( argc ) {
+      case 2:
+        input = new ifstream(argv[1]);
+      case 1:
+        break;
+      default: throw 1;
+    } // switch
+  } catch( ... ) {
+    cerr << "Usage: " <<  argv[0] << " [infile-file]" << endl;
+    exit( EXIT_FAILURE );
+  } // try
+  
+  *input >> noskipws;
+  // cin >> noskipws;
   for ( ;; ) {
     string raw;
-    getline(cin, raw);
-    if ( cin.fail() ) goto finished;
+    getline(*input, raw);
+    if ( input->fail() ) goto finished;
 
     if (raw == "") {
       cout << "'' : Warning! Blank line." << endl;
       continue;
     }
-
     int length = raw.length(); int i;
     try {
       _Enable {
@@ -32,7 +47,7 @@ int main( int argc, char * argv[] ) {
       cout << '\'' << raw.substr(0, i+1) << '\'' << " no";
     }// try
     if (i < length - 1) {
-      cout << " -- extraneous characters '";
+      cout << " - extraneous characters '";
       for (; i < length-1; i++) cout << raw[i+1];
       cout << "'";
     }

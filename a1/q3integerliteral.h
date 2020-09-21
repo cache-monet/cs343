@@ -4,11 +4,13 @@
 
 _Coroutine IntegerLiteral {
     char ch;                            // character passed by cocaller
-    int val = 0;
-    void parse_hex();
-    void main();
+    enum IntegerType { DECIMAL, OCTAL, HEXADECIMAL, SUFFIX };
+    const int MAX_DIGIT_DEC = 20, MAX_DIGIT_OCT = 22, MAX_DIGIT_HEX = 16;
+    long unsigned int val = 0; int digits = 0;
+    IntegerType tag = IntegerType::DECIMAL;
     void raiseError();
     void raiseMatch();
+    void main();
     public:
       enum { EOT = '\003' };              // end of text
       _Event Match {                      // last character match
