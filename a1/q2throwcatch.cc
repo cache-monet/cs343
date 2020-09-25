@@ -70,3 +70,4 @@ int main( int argc, char * argv[] ) {
     } // try
     cout << "calls " << calls << ' ' << " exceptions " << excepts << " destructors " << dtors << endl;
 }
+// end of file

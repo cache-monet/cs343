@@ -81,3 +81,4 @@ int main( int argc, char * argv[] ) {
   } // if
     cout << "calls " << calls << ' ' << " exceptions " << excepts << " destructors " << dtors << endl;
 }
+// end of file

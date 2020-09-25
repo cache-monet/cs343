@@ -58,3 +58,4 @@ int main( int argc, char * argv[] ) {
     cout << "normal result " << rv << " exception results " << ev1 << ' ' << ev2 << ' ' << ev3 << endl;
     cout << "calls "  << rc << " exceptions " << ec1 << ' ' << ec2 << ' ' << ec3 << endl;
 }
+// end of file

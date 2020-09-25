@@ -1,7 +1,7 @@
 GVERSION = -10
 CXX = u++				# compiler
-CXXFLAGS = -g -Wall -Wextra -MMD -Wno-implicit-fallthrough #-DNOOUTPUT# compiler flags
-MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}# makefile name
+CXXFLAGS = -g -Wall -Wextra -MMD -Wno-implicit-fallthrough # -O2 -DNOOUTPUT# compiler flags
+MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}# makefile nam#e
 
 OBJECTS01 = q1exception.o		# optional build of given program
 EXEC01 = exception			# given executable name
