@@ -71,3 +71,4 @@ void IntegerLiteral::next( char c ) {
     ch = c;                         // communication input
     resume();                       // activate
 } // coroutine next
+// end of file

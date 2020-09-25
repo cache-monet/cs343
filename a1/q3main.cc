@@ -57,3 +57,4 @@ int main( int argc, char * argv[] ) {
   if (input != &cin) delete input;
   return 0;
 }
+// end of file
