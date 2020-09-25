@@ -1,19 +1,34 @@
 
-ii.
-Benchmarks (unoptimized):
-./throwcatch 12 12 103 40
-56.91u 0.07s 0:56.99
-57.23u 0.03s 0:57.26
-57.02u 0.03s 0:57.05
-56.81u 0.03s 0:56.85
-./longjmp 12 12 103 40
-19.88u 0.00s 0:19.88
-20.08u 0.01s 0:20.10
-19.72u 0.00s 0:19.72
-19.80u 0.00s 0:19.80
+B i.
+The difference between the transformed program longjmp and the original throwcatch
+the amount of destructors are different.
+This is because when an error is raised throw/catch unwinds the stack and calls all appropriate
+dtors (PRT) which increments the destructors count.
+Since longjmp is a low level function it does not perform this step causing the difference.
 
-iii.
+B ii.
+Benchmarks (unoptimized):
+
+input: 12 12 103 40
+./throwcatch              ./longjmp
+----------------------------------------------
+56.91u 0.07s 0:56.99	    19.88u 0.00s 0:19.88
+57.23u 0.03s 0:57.26	    20.08u 0.01s 0:20.10
+57.02u 0.03s 0:57.05	    19.72u 0.00s 0:19.72
+56.81u 0.03s 0:56.85	    19.80u 0.00s 0:19.80
+
+B iii.
 There is a significant performance increase between the unoptimized transformed program and the original.
-On average the transformed program is 37.1225 seconds faster.
 This is because try/catch needs to search down the stack for each raised exception to find the correct handler.
 The search process is an O(n) operation; n being the number of stackframes.
+On average the transformed program is 37.1225 seconds faster.
+
+B iv.
+input: 12 12 103 40
+./throwcatch              ./longjmp
+----------------------------------------------
+53.68u 0.00s 0:53.71	    15.71u 0.00s 0:15.71
+54.09u 0.00s 0:54.10	    15.76u 0.00s 0:15.76
+54.43u 0.00s 0:54.45	    15.77u 0.01s 0:15.80
+54.36u 0.00s 0:54.37	    15.52u 0.00s 0:15.53
+On average the transformed program is around ~38 seconds faster.
