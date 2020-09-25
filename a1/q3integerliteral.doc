@@ -1,0 +1,106 @@
+TEST DOC
+--------
+Test 1
+  description:
+    tests digit limits and case insensivity for non-numeric hex characters and interactive input
+  testing:
+    ./integerliteral
+      01234567012345670123456
+      01234567012345670123456lu
+      012345670123456701234567
+      12345678901234567890
+      1234567890123456789012345lu
+      0x0123456789abCDef
+      0x0123456789abCDef0
+  output:
+    '01234567012345670123456' : '01234567012345670123456' yes, value 12046813061913290542
+    '01234567012345670123456lu' : '01234567012345670123456lu' yes, value 12046813061913290542
+    '012345670123456701234567' : '012345670123456701234567' no
+    '12345678901234567890' : '12345678901234567890' yes, value 12345678901234567890
+    '1234567890123456789012345lu' : '123456789012345678901' no - extraneous characters '2345lu'
+    '0x0123456789abCDef' : '0x0123456789abCDef' yes, value 81985529216486895
+    '0x0123456789abCDef0' : '0x0123456789abCDef0' no
+  analysis:
+    1. Correct: octal input has exactly 22 digits and oct literal does not count towards digits.
+    Suffixes is case insensive.
+    2. Correct: suffixes does not count to digits
+    3. Correct: input exceeds octal digit limit.
+    4. Correct: decimal input has exactly 20 digits
+    5. Correct: decimal input exceeds limits and the correct extraneous characters are shown
+    6. Correct: hexadecimal input has exactly 16 digts and case of input does not affect behavior
+    7. Correct: input exceeds hex digit limit.
+
+Test 2
+  description:
+    tests suffixes and matching
+  testing:
+    ./integerliteral
+      10Lu
+      10UL
+      0u
+      0x11l
+      0xLU
+      0x123456luextraneous
+      UL
+      1uul
+  output:
+    '10Lu' : '10Lu' yes, value 10
+    '10UL' : '10UL' yes, value 10
+    '0u' : '0u' yes, value 0
+    '0x11l' : '0x11l' yes, value 17
+    '0xLU' : '0xL' no - extraneous characters 'U'
+    '0x123456luextraneous' : '0x123456lu' yes, value 1193046 - extraneous characters 'extraneous'
+    'UL' : 'U' no - extraneous characters 'L'
+    '1uul' : '1uu' no - extraneous characters 'l'
+  analysis:
+    1. Correct: program should be case agnostic in suffix
+    2. Correct: program should be agnostic to suffix order
+    3. Correct: unsigned 0
+    4. Correct: unsigned 0x11
+    5. Correct: suffixes must be preceeded by a hex digits
+    6. Correct: When both u and l next to each other intger is considered to be a match and later digits are extraneous
+    7. Correct: Suffixes must be preceeded by an integer
+    8. Correct: suffix 'u' must be followed by an 'l' or EOT; same is true for 'l'
+
+Test 3 
+  description:
+    tests reading from file
+  testing:
+    ```  
+    echo '010' >> test3 && ./integerliteral test3
+    ```
+  output
+    '010' : '010' yes, value 8
+  analysis:
+    1. Correct: can read input from file
+  
+Test 4
+  description:
+    tests various invalid input
+  testing:
+    ./integerliteral
+    08234
+
+      1
+    error
+    12a
+    0x1x
+    a123
+    $$$
+  output:
+    '08234' : '08' no - extraneous characters '234'
+    '' : Warning! Blank line.
+    ' 1' : ' ' no - extraneous characters '1'
+    'error' : 'e' no - extraneous characters 'rror'
+    '12a' : '12a' no
+    '0x1x' : '0x1x' no
+    'a123' : 'a' no - extraneous characters '123'
+    '$$$' : '$' no - extraneous characters '$$'
+  analysis:
+    1. Correct: invalid character in octal number; alternatively decimal numbers cannot have leading zeros
+    2. Correct: Appropriate warning
+    3. Correct: No leading whitespace
+    4. Correct: invalid character in decimal number
+    5. Correct: invalid in hexadecimal integer 
+    7. Correct: integer must start with a decimal digit (0-9)
+    8. Correct: invalid character
