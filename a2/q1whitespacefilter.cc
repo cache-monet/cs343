@@ -1,7 +1,6 @@
 /* Implementation for WhitespaceFilter coroutine */
-#include "q1filter.h"
 #include <ctype.h>
-using namespace std;
+#include "q1whitespacefilter.h"
 
 WhiteSpaceFilter::WhiteSpaceFilter( Filter* next ) {
     this->next = next;
@@ -20,14 +19,13 @@ void WhiteSpaceFilter::main() {
                 FilterWithinLine: for ( ;; ) {
                     if ( isblank(ch)  ) {
                         TruncateWS: while (isblank(ch)) suspend();
-                        if (ch == '\n') { // trailing whitespace
-                            next->put(ch);
-                            suspend();
-                            break FilterWithinLine;
-                        }
-                        next->put(' '); // truncate 
+                        if (ch != '\n') next->put(' '); // truncate if not trailing whitespace
                     }
                     next->put(ch);
+                    if (ch == '\n') {
+                        suspend();
+                        continue WSMain;
+                    }
                     suspend();
                 }
                 // handle whitespace in middle

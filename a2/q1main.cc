@@ -4,6 +4,8 @@
 using namespace std;					// direct access to std
 #include <cstdlib>					// exit
 #include "q1filter.h"
+#include "q1hexdumpfilter.h"
+#include "q1whitespacefilter.h"
 
 bool convert( int & val, char * buffer ) {		// convert C string to integer
     stringstream ss( buffer );			// connect stream and buffer
