@@ -20,7 +20,6 @@ int main( int argc, char * argv[] ) {
   } // try
   
   *input >> noskipws;
-  // cin >> noskipws;
   for ( ;; ) {
     string raw;
     getline(*input, raw);
