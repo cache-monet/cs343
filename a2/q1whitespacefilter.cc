@@ -36,3 +36,4 @@ void WhiteSpaceFilter::main() {
         next->put(ch); // put arbitray character
     } // try
 } // WhiteSpaceFilter::main
+// end of file

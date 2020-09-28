@@ -1,5 +1,7 @@
-#ifndef __WHITESPACE_FILTER__
-#define __WHITESPACE_FILTER__
+/* Define interface for WhiteSpaceFilter */
+#ifndef _WHITESPACE_FILTER_H
+#define _WHITESPACE_FILTER_H
+
 #include "q1filter.h"
 
 _Coroutine  WhiteSpaceFilter : public Filter {

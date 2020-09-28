@@ -1,22 +1,24 @@
 /* Implementation for Writer coroutine */
 #include <iostream>
-#include "q1filter.h"
 using namespace std;
+#include "q1writer.h"
 
-Writer::Writer( ostream * o ): out(o), char_count(0) {
-	next = NULL;
+Writer::Writer( ostream * o ): char_count(0) {
+    this->out = o;
+	this->next = NULL;
 }	// Writer::Writer
 
 void Writer::main() {
     try {
         _Enable {
             for (;;) {
-                *out << ch;
+                (*out) << ch;
                 char_count++;
                 suspend();
             }
         } // ENABLE
     } catch (Eof&)  {
-        *out << char_count << " characters" << endl;
+        (*out) << char_count << " characters" << endl;
     } // try
 } // Writer::main
+// end of file

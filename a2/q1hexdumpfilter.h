@@ -1,11 +1,11 @@
-#ifndef __HEX_FILTER__
-#define __HEX_FILTER__
+/* Define interface for HexDumpFilter */
+#ifndef _HEX_FILTER_H
+#define _HEX_FILTER_H
 
 #include <string>
 #include "q1filter.h"
 
 _Coroutine HexDumpFilter: public Filter {
-    // YOU MAY ADD PRIVATE MEMBERS
     void main();
     void two_char_to_four_hex();
     std::string to_hex();
