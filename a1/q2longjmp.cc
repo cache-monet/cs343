@@ -17,29 +17,30 @@ PRT( struct T { ~T() { dtors += 1; } }; )
 
 long int Ackermann( long int m, long int n ) {
     calls += 1;
-    jmp_buf localEnv; memcpy(localEnv, env, sizeof(env)); // backup stackframe from before Ackername was called
+    jmp_buf localEnv; memcpy(localEnv, env, sizeof(env)); // backup stackframe from before Ackernmann was called
+
     if ( m == 0 ) {
         if ( rand() % eperiod <= 2 ) { PRT( T t; ) excepts += 1; longjmp(env, 1); }
         return n + 1;
     } else if ( n == 0 ) {
-        if (setjmp(env) != 0) {
+        if (setjmp(env) != 0) { // handle exception
             PRT( cout << "E1 " << m << " " << n );
             memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe before possible longjmp
             if ( rand() % eperiod <= 1 ) { PRT( T t; ) excepts += 1; longjmp(env, 1); }
         } else {
             long int result = Ackermann(m-1, 1);
-            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe
+            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe after calling Ackermann
             return result;
         } // if
     	PRT( cout << " E1X " << m << " " << n << endl );
     } else {
-        if (setjmp(env) != 0) {
+        if (setjmp(env) != 0) { // handle exception
             PRT( cout << "E2 " << m << " " << n );
             memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe before possible longjmp
             if ( rand() % eperiod == 0 ) { PRT( T t; ) excepts += 1; longjmp(env, 1); }
-        } else { // replace
+        } else {
             int result = Ackermann( m - 1, Ackermann( m, n - 1 ));
-            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe
+            memcpy(env, localEnv, sizeof(localEnv)); // restore previous stackframe after calling Ackermann
             return result;
         } // if 
 		PRT( cout << endl << " E2X " << m << " " << n << endl );
@@ -71,7 +72,7 @@ int main( int argc, char * argv[] ) {
         exit( EXIT_FAILURE );
     } // try
     srand( seed );                                      // seed random number
-    if (setjmp(env) != 0) {
+    if (setjmp(env) != 0) { // an exception has occurred
         PRT( cout << "E3" << endl );
     } else {
         PRT( cout << "Arguments " << m << " " << n << " " << seed << " " << eperiod << endl );
@@ -80,3 +81,4 @@ int main( int argc, char * argv[] ) {
   } // if
     cout << "calls " << calls << ' ' << " exceptions " << excepts << " destructors " << dtors << endl;
 }
+// end of file

@@ -4,31 +4,31 @@
 using namespace std;
 #include <unistd.h>                                     // access: getpid
 
-int status;
-
-short int rtn1status;
-int rtn2status;
-long int rtn3status;
+// using an additional for rtn1 since casting rand() to short int have have unexpected behaviors
+bool rtn1_error = false; short int rtn1_code = 0;
+int rtn2_code = 0;
+long int rtn3_code = 0;
 
 int eperiod = 10000;                                    // exception period
 
 double rtn1( double i ) {
     if ( rand() % eperiod == 0 ) {
-        rtn1status = (short int) rand();
+        rtn1_error = true;
+        rtn1_code = (short int) rand();
         return 0.0;
     }
     return i;
 }
 double rtn2( double i  ) {
     if ( rand() % eperiod == 0 ) {
-        rtn2status = rand();
+        rtn2_code = rand();
         return 0.0;
     }
     return rtn1( i ) + i;
 }
 double rtn3( double i  ) {
     if ( rand() % eperiod == 0 ) {
-        rtn3status = (long int) rand();
+        rtn3_code = rand();
         return 0.0;
     }
     return rtn2( i ) + i;
@@ -62,17 +62,17 @@ int main( int argc, char * argv[] ) {
         int val = rtn3( i );
         // val can be any value if an exception has a occured;
         // so only use it after checking no error occured
-        if (rtn1status != 0) {
-            ev1 += rtn1status; rtn1status = 0; ec1 += 1;
-        } else if (rtn2status != 0) {
-            ev2 += rtn2status; rtn2status = 0; ec2 += 1; 
-        } else if (rtn3status != 0) {
-            ev3 += rtn3status; rtn3status = 0;
-            ec3 += 1;
+        if (rtn1_error) {
+            ev1 += rtn1_code; ec1 += 1; rtn1_error = false; // don't need to reset rnt2 since it's not read anywhere
+        } else if (rtn2_code != 0) {
+            ev2 += rtn2_code; ec2 += 1; rtn2_code = 0;
+        } else if (rtn3_code != 0) {
+            ev3 += rtn3_code; ec3 += 1; rtn3_code = 0;
         } else {
             rv += val; rc += 1;
         }
     } // for
     cout << "normal result " << rv << " exception results " << ev1 << ' ' << ev2 << ' ' << ev3 << endl;
     cout << "calls "  << rc << " exceptions " << ec1 << ' ' << ec2 << ' ' << ec3 << endl;
-}
+} // main
+// end of file

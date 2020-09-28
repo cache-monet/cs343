@@ -1,0 +1,140 @@
+B i.
+
+BENCHMARK returntype (without compiler optimization):
+
+./exception 50000000 10000 1003     | ./returntype 50000000 10000 1003
+------------------------------------|--------------------------------- 
+1.76u 0.00s 0:01.76                 |    11.37u 0.00s 0:11.40
+1.81u 0.00s 0:01.81                 |    11.46u 0.00s 0:11.47
+1.77u 0.00s 0:01.77                 |    11.47u 0.00s 0:11.47
+1.72u 0.00s 0:01.72                 |    11.38u 0.00s 0:11.38
+1.73u 0.00s 0:01.73                 |    11.89u 0.00s 0:11.89
+1.79u 0.00s 0:01.80                 |    11.84u 0.00s 0:11.84
+1.77u 0.00s 0:01.77                 |    12.19u 0.00s 0:12.19
+1.72u 0.00s 0:01.72                 |    11.95u 0.00s 0:11.96
+
+BENCHMARK returntypec (without compiler optimization):
+
+./exception 100000000 10000 1003    | ./returntypec 100000000 10000 1003
+------------------------------------|--------------------------------- 
+3.45u 0.00s 0:03.46                 |    3.70u 0.00s 0:03.71 
+3.41u 0.00s 0:03.41                 |    3.72u 0.00s 0:03.72 
+3.38u 0.00s 0:03.38                 |    3.72u 0.00s 0:03.72 
+3.49u 0.00s 0:03.49                 |    3.70u 0.00s 0:03.71 
+3.45u 0.00s 0:03.45                 |    3.74u 0.00s 0:03.74
+3.41u 0.00s 0:03.41                 |    3.72u 0.00s 0:03.72
+3.50u 0.00s 0:03.50                 |    4.01u 0.00s 0:04.01
+3.37u 0.00s 0:03.37                 |    3.72u 0.00s 0:03.72
+
+
+BENCHMARK returntype (optimized):
+./exception 100000000 10000 1003    | ./returntype 100000000 10000 1003
+------------------------------------|--------------------------------- 
+2.69u 0.00s 0:02.69                 |   4.02u 0.00s 0:04.04
+2.59u 0.00s 0:02.59                 |   4.04u 0.00s 0:04.04 
+2.56u 0.00s 0:02.56                 |   3.98u 0.00s 0:03.98 
+2.55u 0.00s 0:02.55                 |   4.04u 0.00s 0:04.04
+2.55u 0.00s 0:02.55                 |   4.00u 0.00s 0:04.00
+2.55u 0.00s 0:02.55                 |   3.99u 0.00s 0:03.99
+2.58u 0.00s 0:02.58                 |   4.00u 0.00s 0:04.00
+2.60u 0.00s 0:02.61                 |   3.98u 0.00s 0:03.98
+
+BENCHMARK returntypec (optimized):
+./exception 100000000 10000 1003    | ./returntypec 100000000 10000 1003
+------------------------------------|-----------------------------------
+2.69u 0.00s 0:02.69                 |   3.55u 0.00s 0:03.57
+2.59u 0.00s 0:02.59                 |   3.51u 0.00s 0:03.51
+2.56u 0.00s 0:02.56                 |   3.50u 0.00s 0:03.50
+2.55u 0.00s 0:02.55                 |   3.50u 0.00s 0:03.50 
+2.55u 0.00s 0:02.55                 |   3.50u 0.00s 0:03.50
+2.55u 0.00s 0:02.55                 |   3.70u 0.00s 0:03.70
+2.58u 0.00s 0:02.58                 |   3.68u 0.00s 0:03.68
+2.60u 0.00s 0:02.61                 |   3.61u 0.00s 0:03.61
+
+
+B ii.
+returnglobal:
+There is a miniscule performance decrease using returnglobal from the original program. 
+Average time difference between transformed and original:
+
+returntype:
+There is an extreme performance decrease using returntype from the original program.
+This is because returntype uses the template library variant. 
+Templates involves many calls to trivial functions (extra overhead) that slow down the overall performance.
+This makes them easy to optimize but very expensive without.
+On average the transformed program is around ~10 seconds slower.
+
+returntypec:
+There is a slight performance decrease using returntypec from the original program.
+This is caused by the fact that tagged union is a larger object than Ex1, Ex2, Ex3 and thus takes longer to construct;
+This issue is further compounded by the fact the returntypec returns a tagged union object even when no exception has occured
+adding even more overhead in reading and writing the attributes of tagged union.
+On average the transformed program is around 0.30-0.40 seconds slower.
+
+B iii.
+returntype: On average the transformed program is around 1.30-1.40 seconds slower than the original.
+returntypec: On average the transformed program is around 0.90-1.0 seconds slower than the original.
+
+C i.
+input 100000000 1000 10003
+
+./exception                       ./returntype            ./returntypec
+-----------------------------------------------------------------------------
+2.98u 0.00s 0:02.99          	4.07u 0.00s 0:04.08	        3.73u 0.00s 0:03.75
+2.96u 0.00s 0:02.96          	4.04u 0.00s 0:04.04	        3.88u 0.00s 0:03.89
+2.95u 0.00s 0:02.95          	4.00u 0.00s 0:04.00	        3.78u 0.00s 0:03.79
+2.94u 0.00s 0:02.94          	4.01u 0.00s 0:04.01	        3.74u 0.00s 0:03.75
+2.95u 0.00s 0:02.95          	4.02u 0.00s 0:04.02	        3.84u 0.00s 0:03.85
+2.96u 0.00s 0:02.96          	4.01u 0.00s 0:04.01	        3.95u 0.00s 0:03.95
+2.96u 0.00s 0:02.96          	4.00u 0.00s 0:04.00	        4.02u 0.00s 0:04.03
+2.99u 0.00s 0:02.99          	4.01u 0.00s 0:04.01	        3.80u 0.00s 0:03.81
+3.00u 0.00s 0:03.00          	4.06u 0.00s 0:04.06	        3.88u 0.00s 0:03.88
+2.97u 0.00s 0:02.97          	4.10u 0.00s 0:04.10	        3.88u 0.00s 0:03.89
+3.05u 0.00s 0:03.05          	4.05u 0.00s 0:04.05	        3.85u 0.00s 0:03.86
+3.08u 0.00s 0:03.08           4.03u 0.00s 0:04.03	        3.87u 0.00s 0:03.88
+
+input: 100000000 100 1003
+./exception                       ./returntype            ./returntypec
+-----------------------------------------------------------------------------
+8.02u 0.00s 0:08.03             	4.23u 0.00s 0:04.25   	4.02u 0.00s 0:04.03
+7.46u 0.00s 0:07.46             	4.21u 0.00s 0:04.21   	4.16u 0.00s 0:04.17
+7.53u 0.02s 0:07.55             	4.26u 0.00s 0:04.26   	4.25u 0.00s 0:04.26
+7.53u 0.00s 0:07.53             	4.22u 0.00s 0:04.22   	3.88u 0.00s 0:03.88
+7.41u 0.01s 0:07.43             	4.21u 0.00s 0:04.22   	3.91u 0.00s 0:04.12
+7.36u 0.02s 0:07.38             	4.23u 0.00s 0:04.24   	3.92u 0.00s 0:03.93
+7.51u 0.08s 0:07.60             	4.28u 0.00s 0:04.29   	3.85u 0.00s 0:03.86
+7.57u 0.00s 0:07.58             	4.28u 0.00s 0:04.29   	3.95u 0.00s 0:03.96
+7.56u 0.01s 0:07.57             	4.23u 0.00s 0:04.23   	3.89u 0.00s 0:03.90
+7.34u 0.00s 0:07.34             	4.20u 0.00s 0:04.62   	3.80u 0.00s 0:03.81
+7.34u 0.00s 0:07.34             	4.20u 0.00s 0:04.21   	3.86u 0.00s 0:03.87
+7.38u 0.00s 0:07.39             	4.20u 0.00s 0:04.20   	3.89u 0.00s 0:03.89
+
+input: 100000000 50 1003
+./exception                       ./returntype            ./returntypec
+-----------------------------------------------------------------------------
+11.91u 0.00s 0:11.94            	4.32u 0.01s 0:04.34   	3.74u 0.00s 0:03.77
+11.82u 0.00s 0:11.82            	4.22u 0.00s 0:04.23   	3.73u 0.00s 0:03.73
+11.66u 0.00s 0:11.66            	4.31u 0.00s 0:04.31   	3.75u 0.00s 0:03.75
+11.35u 0.00s 0:11.36            	4.30u 0.00s 0:04.30   	3.95u 0.00s 0:03.95
+11.80u 0.00s 0:11.80            	4.34u 0.00s 0:04.34   	3.75u 0.00s 0:03.75
+12.09u 0.00s 0:12.09            	4.24u 0.00s 0:04.24   	3.72u 0.00s 0:03.72
+11.88u 0.00s 0:11.89            	4.28u 0.01s 0:04.30   	3.86u 0.00s 0:03.86
+11.88u 0.00s 0:11.89            	4.37u 0.00s 0:04.37   	3.83u 0.00s 0:03.83
+11.79u 0.00s 0:11.80            	4.21u 0.00s 0:04.21   	3.74u 0.00s 0:03.74
+11.71u 0.00s 0:11.72            	4.21u 0.00s 0:04.21   	4.00u 0.00s 0:04.01
+12.13u 0.00s 0:12.30            	4.19u 0.00s 0:04.19   	4.09u 0.00s 0:04.09
+11.75u 0.00s 0:11.75            	4.15u 0.00s 0:04.15   	3.87u 0.00s 0:03.87
+
+
+ii.
+For eperiod = 1000, exception is around 1 second faster than both returntype and returntypec
+
+For eperiod = 100, exception is around 3-4 seconds slower than the transformed programs
+
+For eperiod = 50, exception is around 7-8 seconds slower than the transformed programs
+
+The reason for the above results is due to that as eperiod gets smaller the excecptions are throw.
+Since throw/catch needs to unwind and search down the stack for the correct handler for each raised error
+it adds an O(n) operation for each error raised. Since the transformed programs are low level and does not
+performance those operation: thus saving much overhead as more exception are raised (improving performance
+relative to exception)

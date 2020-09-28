@@ -21,3 +21,4 @@ _Coroutine IntegerLiteral {
       _Event Error {};                    // last character invalid
       void next( char c );
 };
+// end of file
