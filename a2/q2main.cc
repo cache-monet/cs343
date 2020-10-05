@@ -12,10 +12,11 @@ using namespace std;					// direct access to std
 PRNG prng; // set global random nubmer generator
 
 int main( int argc, char * argv[] ) {
-    enum { DefaultGames = 5 };		// global defaults
+    const int DefaultGames = 5;
+    const int DefaultSeed = getpid();		// global defaults
     // MUST BE INT (NOT UNSIGNED) TO CORRECTLY TEST FOR NEGATIVE VALUES
 
-    int gamesToPlay = DefaultGames, seed = getpid();             // default values
+    int gamesToPlay = DefaultGames, seed = DefaultSeed;
     prng.seed(seed); // set prng seed to devault value
     int players; bool players_specified;
     try {
@@ -47,28 +48,26 @@ int main( int argc, char * argv[] ) {
         // if number of players isn't specified randomly generate players for each game
         if (!players_specified) players = prng(2, 10);
         cout << players << " players in the game" << endl;
-        Potato potato;
-        // Store vector of players for each round
+
+        Potato potato; // print toss message
+
+        // Create players
         vector<Player*> player_queue;
-        for (int i= 0; i< players; i++) {
-            player_queue.push_back(new Player(i, potato));
-        }
+        for (int i= 0; i< players; i++) player_queue.push_back(new Player(i, potato));
         Player::umpire = player_queue[0]; // Set umpire 
-        swap(player_queue[0], player_queue[prng(0, players-1)]); // swap the first player with a random index
-        // Create circle of Players
-        for ( int i = 0; i < players; i++) {
-            int left = (i + players - 1) % players, right = (i + 1) % players;
+
+        swap(player_queue[0], player_queue[prng(0, players-1)]); // swap places btwn the first player and a random one
+
+        CreateCycle: for ( int i = 0; i < players; i++) { 
+            int left = (i + players - 1) % players; // left of zero is be the "last" player
+            int right = (i + 1) % players; // right of last player is zero
             player_queue[i]->start(*player_queue[left], *player_queue[right]);
         }
-        // print order
-        // cout << "order of players: ";
-        // for (auto player : player_queue) cout << player->getId() << " -> ";
-        // cout << endl;
 
-        Player::umpire->toss(); // start the game
-
-        // // Clean  up
-        for (auto player : player_queue) delete player;
+        // start the game
+        cout << "U "; Player::umpire->toss();
+        // Clean up: only umpire is left at the end of game
+        delete Player::umpire;
 
         if (gamesToPlay != 1)  {
             cout << endl << endl;

@@ -22,6 +22,7 @@ _Coroutine Player {
     void vote();                            // resume partner to vote
     void terminate();                       // resume umpire
   public:
+    ~Player();
     static Player * umpire;                 // current umpire
 
     Player( int id, Potato & potato );
