@@ -6,7 +6,7 @@ OBJECTS1 = q1main.o q1filter.o q1reader.o q1writer.o q1hexdumpfilter.o q1whitesp
 # object files forming 1st executable with prefix "q1"
 EXEC1 = filter
 
-OBJECTS2 = # object files forming 2nd executable with prefix "q2"
+OBJECTS2 = q2main.o q2potato.o q2player.o # object files forming 2nd executable with prefix "q2"
 EXEC2 = hotpotato
 
 OBJECTS = ${OBJECTS1} ${OBJECTS2}		# all object files
