@@ -1,0 +1,47 @@
+PART A
+    Uniprocessor
+        shared:264824015
+        shared:265572980
+        shared:254090930
+        shared:280537242
+        shared:282484117
+        shared:268906025
+        shared:298296348
+        shared:315736078
+        shared:286003129
+        shared:280709833
+
+    Multiprocessor
+        shared:203310949
+        shared:210679743
+        shared:204700486
+        shared:206687882
+        shared:212416031
+        shared:202833827
+        shared:198759151
+        shared:201442253
+        shared:200198587
+        shared:211344301
+
+PART B
+    No for both; because q3 is a concurrent program there're race conditions around shared (both uniprocessor and
+    multiprocessor are multi-threaded). Addition is not an atomic operation (need to load, compute and save the value).
+    Since there's no protection around the shared resource (ie: semaphore/locks) to ensure atomicity
+    there would be cases where one thread will overwrite the work of another and cause non-deterministic behavior
+    (b/c execution order is non-deterministic).
+
+PART C
+    Largest value:   400000000
+        There's two tasks and each task will increment shared by 200000000 times (assumes no race condition occur and the program runs sequentially)
+    Smallest value:  2
+        WLOG let Task1 be first task that runs; it reads in shared = 0; performs addition;
+        but before it could write the value (1) into shared it gets interrupted and Task2 starts.
+        Task2 starts and runs 99999999 times; but right before the second shared+=1 in the final iteration starts; it gets intercepted by Task1;
+        Task1 resumes and writes 1 into shared before it's interrupted once again
+        Task2 resumes and the operation reads in the overwritten shared value but gets intercepted before it could write it;
+        Task1 resumes and runs until its completed; Task2 starts again and it stores its computed value into shared (overwritting Task1's work)
+        shared += 1 -> 1 += 1 = 2
+
+PART D
+    On average, values for multiprocessor is lower than uniprocessor.
+    This is because the multiprocessor have more threads and thus exacerbates the problem of race conditions leading to more overwrites.
