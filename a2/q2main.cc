@@ -62,13 +62,14 @@ int main( int argc, char * argv[] ) {
             int left = (i + players - 1) % players; // left of zero is be the "last" player
             int right = (i + 1) % players; // right of last player is zero
             player_queue[i]->start(*player_queue[left], *player_queue[right]);
-        }
+        } // CreateCycle
 
         // start the game
         cout << "U "; Player::umpire->toss();
         // Clean up: only umpire is left at the end of game
         delete Player::umpire;
 
+        // print out 2 newlines between each game
         if (gamesToPlay != 1)  {
             cout << endl << endl;
         }

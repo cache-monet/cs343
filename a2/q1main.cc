@@ -40,7 +40,6 @@ int main( int argc, char* argv[] ) {
 	try {
 	switch ( nonfilter_args ) {
 		case 3: // input and output files are specified
-			cout << "both input and out is set" << endl;
 			try {
 				infile = new ifstream( argv[argc-2] );	// open input file
 			} catch( uFile::Failure & ) {

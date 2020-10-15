@@ -1,0 +1,140 @@
+INPUT_FILES
+    - triangle_newline:
+        ```
+        12
+        34
+        56
+        ```
+    - whitespace_input:
+        ```    
+                test             one
+
+        test          trailing           
+        ````
+    - simple
+        ```   
+        0123456789012345678901234567890123456789
+        ```   
+    - special_char
+        ```
+        test    whitespace
+            whatever 343?~!
+        ```
+
+FILTER SPECIFIC TESTS
+
+- q1trianglefilter.cc
+    - TestNewline
+        cmd:
+            ./filter -T 3 triangle_newline 
+        expected behavior:
+            - triangle will convert new line to ' ' L17
+            - should extract args for -T correctly q1main.cc L:29-36
+        output:
+            ```
+             1
+            2 3
+            4
+            5613 characters
+            ```
+
+    - TestEvenBase
+        cmd:
+            ./filter -T 10 simple 
+        expected behavior:
+            - should print a base 11 triangle (height: 6). PrintTriangle should run for 10/2+1 = 6 times triangle L5 and L13
+        output:
+            ```
+                0
+               123
+              45678
+             9012345
+            678901234
+           56789012345
+                6
+               78971 characters
+            ```
+
+- hexdumpfilter.cc
+    - TestFormatAndHex
+        cmd:
+            ./filter -h special_char
+        expected behavior:        
+            - Should successfully convert all characters (including special) to hex representation and print with properly formatting L16-20
+        output:
+            ```
+            7465 7374   2020 2020   7768 6974   6573 7061
+            6365 0a20   2020 2077   6861 7465   7665 7220
+            3334 333f   7e21108 characters
+            ```
+
+- whitespacefilter.cc
+    - TestGeneral
+        cmd: 
+            ./filter -w whitespace_input
+        expected behavior:        
+            - trim leading whitespace L13
+            - skip blank line L13-17
+            - truncate whitespace between non-blank chars into one ' ' and trim trailing whitespace: L20-23
+        output:
+            ```
+            test one
+            test trailing
+            trail_whitespace
+            40 characters
+            ```
+
+MISC TESTS
+    - TestPipeline
+        cmd:
+            ./filter -h -w -T 43 -w -h whitespace_input
+        expected behavior:        
+            - setup filter pipeline in the right order q1main.cc L75-98
+        output:
+            ```
+            300a 6132   300a 3230   3230 0a32   3032 3020
+            320a 3032   3020 3230   3230 0a32   3032 3020
+            3230 3230   2032 0a30   3230 2037   3436 3520
+            3733 3734   0a32 3032   3020 3230   3230 2032
+            3032 300a   3230 3230   2032 3032   3020 3230
+            3230 2032   0a30 3666   2036 6536   3520 3061
+            3061 2032   3032 300a   3230 3230   2037 3436
+            3520 3733   3734 2032   3032 3020   320a 3032
+            3020 3230   3230 2032   3032 3020   3230 3230
+            2037 3437   320a 3631   3639 2036   6336 3920
+            3665 3637   2032 3032   3020 3230   3230 0a32
+            3032 3020   3230 3230   2032 3032   3020 3230
+            3061 2037   3437 3220   360a 3136   3920 3663
+            3566 2037   3736 3820   3639 3734   2036 3537
+            3320 3730   3631 0a36   3336 3520   3230 3230
+            2032 3032   3020 3230   3230 2032   3032 3020
+            3230 3230   2032 0a30   3230 2032   3032 3020
+            3230 3230   2030 61801 characters
+            ```
+
+    - TestIO
+        cmd:
+            ./filter -T 3 triangle_newline outfile
+        expected behavior:
+            - should set input to read from file triangle_newline and set ostream to output file q1main.cc L41-63
+        output:
+            ```outfile
+             1
+            2 3
+            4
+            5613 characters
+            ```
+            
+    -TestStdin
+        cmd:
+            ```
+            ./filter -h
+            12345
+
+            ```
+        expected behavior:
+            - should set io to stdin and stdout L41-63
+        output
+        ```stdout
+        3132 3334   350a
+        ```
