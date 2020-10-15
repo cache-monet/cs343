@@ -15,7 +15,6 @@ HexDumpFilter::HexDumpFilter( Filter* next ) {
 
 string HexDumpFilter::to_hex() {
     stringstream ss;
-    // ss << setfill('0') << setw(2) << hex << c; // set with to 2 and 
     ss << setfill('0') << setw(2) << hex << (unsigned int)(ch);
     return ss.str();
 }

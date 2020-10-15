@@ -9,7 +9,7 @@ EXEC1 = filter
 OBJECTS2 = q2main.o q2potato.o q2player.o # object files forming 2nd executable with prefix "q2"
 EXEC2 = hotpotato
 
-OBJECTS3 = q3.o # object files forming 2nd executable with prefix "q2"
+OBJECTS3 = q3.o # object files forming 34d executable with prefix "q3"
 EXEC3 = q3 
 
 OBJECTS = ${OBJECTS1} ${OBJECTS2} ${OBJECTS3}		# all object files
@@ -28,7 +28,7 @@ ${EXEC1} : ${OBJECTS1}				# link step 1st executable
 ${EXEC2} : ${OBJECTS2}				# link step 2nd executable
 	${CXX} ${CXXFLAGS} $^ -o $@
 
-${EXEC3} : ${OBJECTS3}				# link step 34d executable
+${EXEC3} : ${OBJECTS3}				# link step 3rd executable
 	${CXX} ${CXXFLAGS} $^ -o $@
 
 #############################################################

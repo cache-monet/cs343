@@ -20,6 +20,9 @@ _Coroutine Player {
     // YOU ADD MEMBERS HERE
     void main();
     void vote();                            // resume partner to vote
+    void election();                        // holds election when umpire is to be deleted
+    void turn_actions();                    // player action for each toss
+    void vote_actions();                    // election actions; only called by non-umpire players
     void terminate();                       // resume umpire
   public:
     ~Player();

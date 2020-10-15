@@ -16,19 +16,19 @@ void WhiteSpaceFilter::main() {
                     continue WSMain;
                 }
 
+                // handle whitespace in middle
                 FilterWithinLine: for ( ;; ) {
                     if ( isblank(ch)  ) {
                         TruncateWS: while (isblank(ch)) suspend();
                         if (ch != '\n') next->put(' '); // truncate if not trailing whitespace
                     }
                     next->put(ch);
-                    if (ch == '\n') {
+                    if (ch == '\n') { // line has ended restart from beginning
                         suspend();
                         continue WSMain;
                     }
                     suspend();
                 }
-                // handle whitespace in middle
             }
         } // ENABLE
     } catch (Eof&)  {
