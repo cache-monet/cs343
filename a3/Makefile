@@ -1,7 +1,7 @@
-OPT:= # -O2 -nodebug
-SIMPL:=CBEGIN
+OPT:= -O2 -multi -nodebug
+SIMPL:=ACTOR
 TYPE:=int
-BIMPL:=NOBUSY
+BIMPL:=BUSY
 SENTINEL:=-1
 
 CXX = u++					# compiler
@@ -9,7 +9,7 @@ CXXFLAGS = -g -multi ${OPT} -Wall -Wextra -MMD -D"${SIMPL}" -D"${BIMPL}" \
 		   -DTYPE="${TYPE}" -DSENTINEL="${SENTINEL}" # compiler flags
 MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}	# makefile name
 
-OBJECTS1 = q2.o # object files forming 1st executable with prefix "q2"
+OBJECTS1 = q2main.o # object files forming 1st executable with prefix "q2"
 EXEC1 = quicksort				# 1st executable name
 
 OBJECTS2 = q3main.o # object files forming 2nd executable with prefix "q3"

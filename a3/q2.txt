@@ -1,0 +1,73 @@
+B)
+i. 
+input size = 500000000 for all experiments
+
+CBEGIN
+depth 0 
+Sort time 19.578591425 sec.
+17.67u 3.27s 0:20.89 1957288kb
+depth 1 
+Sort time 9.664100132 sec.
+19.40u 1.98s 0:11.00 1957448kb
+depth 2 
+Sort time 5.386007364 sec.
+20.78u 1.97s 0:06.69 1957676kb
+depth 3 
+Sort time 3.252090452 sec.
+21.37u 1.49s 0:04.56 1957908kb
+depth 4 
+Sort time 2.800071624 sec.
+24.70u 2.12s 0:04.13 1958640kb
+depth 5 
+Sort time 2.819605859 sec.
+83.80u 3.82s 0:04.20 1959784kb
+
+ACTOR
+depth 0 
+Sort time 16.801182950 sec.
+15.07u 3.14s 0:18.18 1957336kb
+depth 1 
+Sort time 9.155083607 sec.
+25.88u 3.14s 0:10.48 1957376kb
+depth 2 
+Sort time 5.023374859 sec.
+34.36u 2.43s 0:06.42 1957532kb
+depth 3 
+Sort time 3.066389015 sec.
+44.71u 2.84s 0:04.43 1957636kb
+depth 4 
+Sort time 3.175777772 sec.
+97.62u 2.41s 0:04.51 1958628kb
+depth 5 
+Sort time 2.438299447 sec.
+140.06u 2.21s 0:03.86 1959740kb
+
+TASK
+depth 0 
+Sort time 16.078237213 sec.
+14.37u 3.12s 0:17.45 1957372kb
+depth 1 
+Sort time 14.850326767 sec.
+16.81u 1.93s 0:16.19 1957336kb
+depth 2 
+Sort time 15.168364137 sec.
+17.09u 2.33s 0:16.54 1957588kb
+depth 3 
+Sort time 16.157492600 sec.
+17.71u 2.70s 0:17.50 1957712kb
+depth 4 
+Sort time 16.660683090 sec.
+18.02u 3.24s 0:18.06 1958172kb
+depth 5 
+Sort time 16.849898652 sec.
+19.37u 3.11s 0:18.27 1958872kb
+
+Comparison between user time and real time:
+Across all implementation we see user time increases as depth increases. For ACTOR and CBEGIN we see that the real time decreases with higher depth values, whereas TASK real time fluctuates.
+
+ii. 
+CBEGIN: Performance improve with more available processors. The greatest performance boost happened when processors went from 0 -> 1 -> 2 almost halving the sort time each time. The performance begins to from depth 3-5 with performance slightly decreasing in depth 5 compared to 5
+ACTOR: As with CBEGIN performance improved with processors (though not as dramatically as CBEGIN).
+TASK: As more processors are added performance decreases slightly.
+
+iii) Since we are creating more tasks when processors increases it would follow that user times would increase as more partitions are running concurrently. In addition since we are spending more time (in parallel) on CPU the real / sort time should decrease (which holds true for ACTOR / CBEGIN). While the performance increase in real/sort time doesn't seem to hold true for TASK this is likely because of the additional overhead need for creating more tasks cost more time than the time we save by running concurrently.
