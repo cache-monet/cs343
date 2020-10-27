@@ -1,6 +1,5 @@
-OPT:= # -O2 -nodebug
+OPT:= -O2 -multi -nodebug
 SIMPL:=ACTOR
-# SIMPL:=CBEGIN
 TYPE:=int
 BIMPL:=BUSY
 SENTINEL:=-1

@@ -9,6 +9,7 @@ using namespace std;
 
 template<typename T>
 void quicksort( T values[], unsigned int low, unsigned int high, unsigned int depth ) {
+    if (high == (unsigned int)-1) return; // sorting empty arr (length-1 underflowed)
     uThisTask().verify();
 
     auto swap = [](T& a, T& b) {
@@ -44,10 +45,10 @@ void quicksort( T values[], unsigned int low, unsigned int high, unsigned int de
 
 #ifdef ACTOR
 #include <uActor.h>
-#include <vector>
 
 template<typename T>
 void quicksort( T values[], unsigned int low, unsigned int high, unsigned int depth ) {
+    if (high == (unsigned int)-1) return; // sorting empty arr (length-1 underflowed)
     struct SortMsg : public uActor::Message { 
         T* values;
         unsigned int low;
@@ -109,5 +110,64 @@ void quicksort( T values[], unsigned int low, unsigned int high, unsigned int de
     uActorStop();
 } // quicksort
 #endif // ACTOR
+
+#ifdef TASK
+template<typename T>
+void quicksort( T values[], unsigned int low, unsigned int high, unsigned int depth ) {
+    if (high == (unsigned int)-1) return; // sorting empty arr (length-1 underflowed)
+    _Task QuickSort {
+        T* values;
+        unsigned int low;
+        unsigned int high;
+        unsigned int depth;
+
+        void swap (T& a, T& b) {
+            T temp = a;
+            a = b; b = temp;
+        } // swap
+
+        tuple<unsigned int, unsigned int> partition(unsigned int low, unsigned int high) {
+	        unsigned int i = low, j = high;
+	        T pivot = values[low + (high - low) / 2];
+	        // partition
+	        while (i <= j ) {
+		        while (values[i] < pivot) ++i;
+		        while (values[j] > pivot) --j;
+		        if (i <= j) {
+			        swap(values[i], values[j]);
+                    ++i;
+                    if (j != 0 ) --j; // watch out for unsigned underflow
+		        }
+	        }
+            return tuple(i, j);
+        } // partition
+
+        void recurse(unsigned int low, unsigned int high) {
+            auto [i, j] = partition(low, high);
+            if (j > low ) recurse(low, j);
+            if (i < high) recurse(i, high);
+        } // recurse
+
+        void main() {
+            uThisTask().verify();
+            // do both partitions on current task
+            if (depth == 0) {
+                recurse(low, high);
+            } else {
+                auto [i, j] = partition(low, high);
+                if (j > low) QuickSort left(values, low, j, depth-1); // WLOG create a new task for the left partition
+                if (i < high) recurse(i, high); // resume right partition on current task
+            }
+        } // main
+      public:
+        // constructor
+        QuickSort(T* values, unsigned int low, unsigned int high, unsigned int depth) :
+            values(values), low(low), high(high), depth(depth) {}
+    }; // QuickSort
+
+    QuickSort init(values, low, high, depth);
+}
+
+#endif // TASK
 
 #endif // QUICKSORT_H
