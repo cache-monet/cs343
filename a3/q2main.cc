@@ -12,7 +12,7 @@ using namespace std;
 unsigned int uDefaultStackSize() {
 	return 512 * 1000;		// set all task stack-size to 512K
 }
-
+// helper function for main to print 
 template<typename T>
 void print_arr(ostream* o, int length, T* values) {
 	if (length == 0) { *o << endl; return; } // edgecase
@@ -35,7 +35,7 @@ void print_arr(ostream* o, int length, T* values) {
 		}
 		// doing some boolean algebra
 		// don't print "  " after last line
-		if (r < rows - (int) no_remainder) cout << "  "; 
+		if (r < rows - (int) no_remainder) *o << "  "; 
 	}
 }
 
@@ -108,7 +108,7 @@ int main(int argc, char * argv[]) {
 		print_arr(outfile, length, values); // print read array
 		if (length != 0) quicksort(values, 0, (unsigned int) length-1, (unsigned int) depth); 
 		print_arr(outfile, length, values);
-		cout << endl; // print separators
+		*outfile << endl; // print separators
 		delete values; // cleanup
 	}
 	finished:

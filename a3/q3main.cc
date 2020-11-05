@@ -28,8 +28,8 @@ int main (int argc, char * argv[] ) {
         cout << "Usage:" << argv[0] << "[ Cons (> 0) [ Prods (> 0) [ Produce (> 0) [ BufferSize (> 0) [ Delay (> 0) [ Processors (> 0) ] ] ] ] ] ]" << endl;
 		exit ( 1 );
     }
+    uProcessor p[processors - 1] __attribute__(( unused )); // multi-processor
     if (delay == -1) delay = cons + prod; // delay value not specified; use default
-    if (processors != 1) uProcessor p[processors - 1] __attribute__(( unused )); // multi-processor
     
     int total_sum = 0;
     int counters[cons] = {0};

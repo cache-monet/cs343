@@ -1,0 +1,41 @@
+3.
+a) iii.
+Barging prevention would require us to to not release the lock at the end but when a task barges
+
+b)
+
+i. Benchmarks 
+
+running `./buffer 55 100 50000 20 10 3` for all experiments
+
+UNOPTIMIZED
+BUSY:   3.14u 0.02s 0:03.14 5620kb
+NOBUSY: 4.02u 0.00s 0:04.02 5556kb 
+
+OPTIMIZED
+BUSY:   2.90u 0.00s 0:02.90 5504kb
+NOBUSY: 3.64u 0.00s 0:03.64 5432kb
+
+ii. On uniprocessor, the BUSY implementation is slightly faster than the NOBUSY implementation both optimized and unoptimized. As expected the optimized version of BUSY / NOBUSY runs slightly faster than their non-optimized counterparts
+
+iii.
+
+running `./buffer 55 100 50000 20 10 3` for all experiments
+
+UNOPTIMIZED
+BUSY:  46.23u 0.06s 0:15.42 5652kb 
+NOBUSY: 58.63u 0.12s 0:19.57 5512kb
+
+OPTIMIZED
+BUSY:   51.25u 0.11s 0:17.11 5760kb
+NOBUSY: 60.07u 0.23s 0:20.11 5752kb
+
+Performance is better on BUSY than NOBUSY for both optimized and unoptimized. In addition the non-optimized programs perform better than their optimized counterparts
+
+iv.
+The multi processor versions of BUSY/NOBUSY are much slower (like 10-20 times) slower than uniprocessor
+
+v.
+A reason that BUSY would be faster than NOBUSY would be that the overhead of creating additional locks (to prevent barging) and managing the barge states
+
+vi. Additional processors means more threads trying to acquire locks meaning there's more time spent waiting for resources (and trying to acquire locks).

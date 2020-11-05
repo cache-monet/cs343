@@ -1,0 +1,48 @@
+a)
+
+DARRAY
+times = 20000000
+    1 tasks:  1.68u 0.00s 0:01.68 4188kb
+    2 tasks:  20.91u 0.12s 0:10.55 4340kb
+    4 tasks:  92.17u 0.34s 0:23.48 4428kb 
+
+VECTOR1
+times = 10000000
+    1 tasks:  1.05u 0.00s 0:01.06 4316kb
+    2 tasks:  16.01u 0.07s 0:08.05 4068kb 
+    4 tasks:  46.40u 0.11s 0:11.84 4176kb
+
+VECTOR2
+times = 2000000
+    1 tasks: 1.29u 0.00s 0:01.28 4312kb
+    2 tasks: 11.99u 0.00s 0:05.99 4360kb 
+    4 tasks: 65.95u 0.09s 0:16.57 4448kb
+real time increase 
+
+STACK
+times = 20000000 
+    1 tasks:  1.12u 0.00s 0:01.12 4216kb
+    2 tasks:  2.15u 0.00s 0:01.09 4060kb
+    4 tasks:  4.28u 0.00s 0:01.08 4368kb
+
+
+b)
+Across all implementation as the number of tasks increase so does the USER TIME
+DARRAY: user time increases exponentially, real-time increases by ~10 seconds as tasks increases
+VECTOR1: user time increases exponentially, but real increases in increasingly less amounts
+VECTOR2: user time increases exponentially as does real time
+STACK: user time increases linearly, real time is decreasing in increasingly less amounts.
+
+c)
+As tasks increase 
+VECTOR1 performed better than VECTOR2 is because vector is optimized for accessing random elements (rather than appending to end/front). Also VECTOR2 needed to be performed sequentially (emplace_back) (and V1 is better suited for concurrency) so more time is spent waiting for mutex.
+DARRAY is the most performant of the dynamically allocated arrays, b/c <unique_ptr> is better suited than vector.
+STACK scales the best (decreasing real time) This is likely due to preallocating an array on the stack is much better for concurrency than dynamic allocation (in the heap)
+
+First reason is it is more fast for finding position in stack
+compare to heap. For heap operation, directly assign is faster
+than adding argument by "at" and "push_back"
+
+For VECTOR1 and DARRAY, increasing the number of tasks increase the real time by a decreasing amount. The reason for this is because they allocate the space
+for the container beforehand, which means that more parallelism can be achieved from the threads. However, with VECTOR2, there is the overhead of dynamically
+resizing the container, which is an operation that must be sequential, so timing isn't increased as much as in the other cases.
