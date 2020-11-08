@@ -1,15 +1,14 @@
-VIMPL:=MC
+VIMPL:=BAR
 OUTPUT:=OUTPUT
 
 CXX = u++					# compiler
 CXXFLAGS = -g -multi -O2 -Wall -Wextra -MMD -D${VIMPL} -D${OUTPUT} # compiler flags
 MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}	# makefile name
 
-OBJECTS = q3tallyVotes${VIMPL}.o # list of object files for question 3 prefixed with "q3"
+# OBJECTS = q3tallyVotes${VIMPL}.o # list of object files for question 3 prefixed with "q3"
+OBJECTS = q3tallyVotes${VIMPL}.o q3voter.o q3printer.o q3main.o  # list of object files for question 3 prefixed with "q3"
 EXEC = vote
 
-OBJECTS2 = q1.o
-EXEC2 = q1
 
 DEPENDS = ${OBJECTS:.o=.d}			# substitute ".o" with ".d"
 
