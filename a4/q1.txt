@@ -1,0 +1,32 @@
+PART A
+./q1 1000000 100 used for all experiments
+Internal optimized          6.31u 0.89s 0:07.17
+External optimized          4.40u 0.82s 0:05.20
+Internal non-optimized      6.83u 0.94s 0:07.75
+External non-optimized      7.33u 1.00s 0:08.36
+
+PART B
+When both programs are optimized, the user time for the external version is significantly smaller than internal (internal time is ~140% of external).
+When both programs are non-optimized, the internal version is slightly faster than external (external time is ~110% of internal)
+
+Internal outperformed the external in non-optimized since  
+
+For the non optimized versions using an internal buffer (via pre-allocating an int array and insert at position) allowed INTERNAL to significantly outperform EXTERNAL despite the handicap that INTERNAL has to perform O(size) additional cout statements vs O(1) of EXTERNAL
+
+However iN the optimized versions, this optimization significantly improved the performance of string concatenation and external buffering resulting in the reduced user time between optimized vs non-optimized external. However the work needed by INTERNAL to print the result showed in how little the program was able to improve in speed after optimization and thus it lagged behind EXTERNAL (io operations are expensive).
+
+PART C
+There is a significant performance increase in user time optimizing external (non optimized time is ~170% of optimized)
+There is a slight performance increase in user time optimizing internal (non optimized time is ~110% of optimized)
+
+PART D
+
+./q1 1000000 100 used for all experiments
+
+Internal optimized          5.69u 0.50s 0:06.17
+External optimized          3.65u 0.52s 0:04.16
+Internal non-optimized      5.88u 0.49s 0:06.35
+External non-optimized      6.49u 0.60s 0:07.06
+
+Changing endl to \n resulting in all versions of the program to run slightly faster
+

@@ -1,0 +1,11 @@
+PART A
+i.  starvation and agnostic to execution order.
+WLOG let T0 be the thread that's in the critical section and T1 be at L6. Suppose after T0 exits the CS it quickly zips around and executes L2 and redeclares its intent forcing T1 to be stuck waiting at L6. Meanwhile since T1 is still DontWantIn, T0 is can re-enter into the critical section through L3.
+In order to T1 to enter the critical section, it must resume before T0 executes L2, thus violating the rule that threads can execute in any arbitrary order.
+ii. In order for this starvation to be noticed, however it requires T0 to always execute all of lines 9 -> 10 -> 1 -> 2 before T1 could resume at L6. ie: the T1 & T0 need to perfectly synchronized for a long period of time before the starvation would be noticed thus making it hard to detect even at 100,000 tries.
+
+PART B
+Bounded overtaking
+
+Changing the order of L9 and L10 
+Not setting ::Last = &me right immediately after exiting the block prevents the other thread from exiting the wait loop and thus cannot take advantage of the retracted intent.
