@@ -1,4 +1,3 @@
-#include <iostream>
 #include "MPRNG.h"
 #include "q3voter.h"
 #include "q3printer.h"
@@ -27,13 +26,15 @@ void Voter::main() {
                 printer.print(id, Voter::States::Going, tour); // going on tour
             } // for
         }  // Enable
+
     } catch (TallyVotes::Failed& ) {
         printer.print(id, Failed);
     } // try
 #if defined ( BAR )
     voteTallier.done(id); // print terminate language
 #else
-    voteTallier.done(); // print terminate language
+    voteTallier.done();
+    printer.print(id, Terminated); // print terminated
 #endif
 
 } // Voter::main

@@ -12,6 +12,9 @@ class TallyVotes {
 // includes for this kind of vote-tallier
 class TallyVotes {
     // private declarations for this kind of vote-tallier
+    uSemaphore muxSem; // used for mutual exclusion
+    uSemaphore syncSem; // used for synchronizing voters
+    void tally(); // tabulate votes; set destination based on election results; increment current group and reset votes
 #elif defined( BAR )                // barrier solution
 #include <uBarrier.h>
 // includes for this kind of vote-tallier
@@ -25,12 +28,7 @@ _Cormonitor TallyVotes : public uBarrier {
     _Event Failed {};
     struct Ballot { unsigned int picture, statue, giftshop; };
     enum TourKind { Picture = 'p', Statue = 's', GiftShop = 'g' };
-    struct Tour {
-        TourKind tourkind;
-        unsigned int groupno; 
-        Tour() {}; // default constructor
-        Tour(TourKind tourkind, unsigned int groupno) : tourkind(tourkind), groupno(groupno) {};
-    };
+    struct Tour { TourKind tourkind; unsigned int groupno; };
     TallyVotes( unsigned int voters, unsigned int group, Printer & printer );
     Tour vote( unsigned int id, Ballot ballot );
     void done(

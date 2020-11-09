@@ -38,6 +38,8 @@ int main(int argc, char* argv[]) {
         exit (1);
     } // try
 
+    if (processors != 0) uProcessor p[processors - 1] __attribute__(( unused )); // add multi-processor if that's there's more than one
+
     mprng.set_seed( seed );
 
     Printer printer(voters);

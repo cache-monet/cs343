@@ -1,4 +1,3 @@
-#include <iostream>
 #include "q3tallyVotes.h"
 #include "q3voter.h"
 #include "q3printer.h"
@@ -34,7 +33,8 @@ TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
 
    if (uBarrier::waiters() + 1 == uBarrier::total()) { // check if we have enough people to form a group
       uBarrier::block(); // calls last() implicitly
-      printer.print(id, Voter::States::Complete, Tour(destination, currentGroup)); // create group
+      Tour tour; tour.tourkind = destination; tour.groupno = currentGroup;
+      printer.print(id, Voter::States::Complete, tour); // create group
    } else { // wait for others to vote and print blocked and unblock msgs
       printer.print(id, Voter::States::Block, uBarrier::waiters() + 1); // waiters including self + 1 since we're not waiting yet
       uBarrier::block();
@@ -42,7 +42,8 @@ TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
    }
 
    if ( voters < group ) _Throw Failed(); // check if there is not enough voter at the end
-   return Tour(destination, currentGroup);
+   Tour tour; tour.tourkind = destination; tour.groupno = currentGroup;
+   return tour;
 }
 
 void TallyVotes::done(unsigned int id) {

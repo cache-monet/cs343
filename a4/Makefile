@@ -1,4 +1,4 @@
-VIMPL:=BAR
+VIMPL:=SEM
 OUTPUT:=OUTPUT
 
 CXX = u++					# compiler
