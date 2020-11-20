@@ -5,7 +5,8 @@ In order to T1 to enter the critical section, it must resume before T0 executes 
 ii. In order for this starvation to be noticed, however it requires T0 to always execute all of lines 9 -> 10 -> 1 -> 2 before T1 could resume at L6. ie: the T1 & T0 need to perfectly synchronized for a long period of time before the starvation would be noticed thus making it hard to detect even at 100,000 tries.
 
 PART B
-Bounded overtaking
-
-Changing the order of L9 and L10 
-Not setting ::Last = &me right immediately after exiting the block prevents the other thread from exiting the wait loop and thus cannot take advantage of the retracted intent.
+Simultaneous W/W on ::Last = &me if L9 and 10 are switched.
+Consider the following situation:
+    T0 finishes the critical section and retracts its intent
+    T1 comes along executes L2 and quickly processes the critical section, retracts it's intent and begins writing to ::Last as T0 is writing to it as well
+this creates a race condition for both T0 and T1 trying to write to ::Last

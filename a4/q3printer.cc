@@ -4,6 +4,7 @@
 using namespace std;
 
 Printer::Printer(unsigned int voters) : voters(voters) {
+#ifndef NOOUTPUT
     cout << "V0";
     for (unsigned int i = 1; i < voters; i++ ) cout << "\tV" << i; // column seperator
     cout << '\n'; // newline
@@ -11,7 +12,7 @@ Printer::Printer(unsigned int voters) : voters(voters) {
     cout << "*******"; // underline for v0
     for (unsigned int i = 1; i < voters; i++ ) cout << "\t*******";
     cout << '\n';
-
+#endif
     buffer = new VoteState[voters]; // create buffer
 } // Printer::Printer
 
@@ -74,7 +75,9 @@ void Printer::flush() {
 } // Printer::flush
 
 Printer::~Printer() { // clean up and print end message
+#ifndef NOOUTPUT
     flush(); // print anything left in buff
     cout << "*****************" << endl << "All tours started" << endl;
+#endif
 	delete[] buffer;
 } // ~Printer

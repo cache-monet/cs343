@@ -19,21 +19,42 @@ void Voter::main() {
     try {
         _Enable {
             for (unsigned int i = 0; i < nvotes; i++) {
-                printer.print(id, Start); // print start message
+
+                #ifdef NOOUTPUT
+                    #define PRINT(...); // print start message
+                #else
+                    printer.print(id, Start); // print start message
+                #endif
+
                 yield( mprng( 4 ) ); // yield between 0 - 4 times 
                 TallyVotes::Tour tour = voteTallier.vote(id, cast());
                 yield( mprng( 4 ) ); // yield again
-                printer.print(id, Voter::States::Going, tour); // going on tour
+
+                #ifdef NOOUTPUT
+                    #define PRINT(...); // going on tour
+                #else
+                    printer.print(id, Going, tour); // going on tour
+                #endif
             } // for
         }  // Enable
 
     } catch (TallyVotes::Failed& ) {
-        printer.print(id, Failed);
+        #ifdef NOOUTPUT
+            #define PRINT(...);
+        #else
+            printer.print(id, Failed);
+        #endif
     } // try
+
 #if defined ( BAR )
     voteTallier.done(id); // print terminate language
 #else
     voteTallier.done();
+#endif
+
+#ifdef NOOUTPUT
+    #define PRINT(...); // print terminated
+#else
     printer.print(id, Terminated); // print terminated
 #endif
 

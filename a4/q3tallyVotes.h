@@ -6,6 +6,13 @@ _Monitor Printer;
 #if defined( MC )                    // mutex/condition solution
 // includes for this kind of vote-tallier
 class TallyVotes {
+    uCondLock bargeLock; // manage bargers
+    uCondLock groupLock; // manage waiters
+    uOwnerLock voteLock; // provides mutual exclusion for tallyVotes
+    bool barge = false; // signals whether a thread has been barging
+    unsigned int waitingVoters = 0;
+    unsigned int bargers = 0;
+    void tally(); // tabulate votes; set destination based on election results; increment current group and reset votes
     // private declarations for this kind of vote-tallier
 #elif defined( SEM )                // semaphore solution
 #include <uSemaphore.h>
@@ -13,7 +20,7 @@ class TallyVotes {
 class TallyVotes {
     // private declarations for this kind of vote-tallier
     uSemaphore muxSem; // used for mutual exclusion
-    uSemaphore syncSem; // used for synchronizing voters
+    uSemaphore syncSem; // used for synchronizing voters begins locked
     void tally(); // tabulate votes; set destination based on election results; increment current group and reset votes
 #elif defined( BAR )                // barrier solution
 #include <uBarrier.h>
