@@ -33,18 +33,13 @@ void Voter::main() {
                 #endif
             } // for
         }  // Enable
-
     } catch (TallyVotes::Failed& ) {
         #ifndef NOOUTPUT
             printer.print(id, Failed);
         #endif
     } // try
 
-#if defined ( BAR )
-    voteTallier.done(id); // print terminate language
-#else
     voteTallier.done();
-#endif
 
 #ifndef NOOUTPUT
     printer.print(id, Terminated); // print terminated

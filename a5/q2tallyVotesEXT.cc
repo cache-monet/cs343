@@ -52,21 +52,37 @@ TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
         printer.print(id, Voter::States::Block, waitingVoters);
       #endif
 
-      for (;;) {
-        _Accept(done) {  // check for error if another voter terminated
-          if ( voters < group ) {
+      // infinite loop for accepting both vote and done
+      // exit immediately upon _Accept(vote)
+      // _Accept(done) checks for failure condition (voters < group) throws if true else continues to
+      // spin
+      for ( ;; ) {
+        try { // handle quorum failure in _Accept(vote)
+          _Accept(vote) {
             #ifndef NOOUTPUT
-               printer.print(id, Voter::States::Unblock, waitingVoters-1);
+                printer.print(id, Voter::States::Unblock, waitingVoters-1);
             #endif
-             _Throw Failed(); 
-          }
-        }
-        _Else _Accept(vote) { break; }  /// wait until the another voter finish voting voting before progressing
-      }
+            break;
+          } or _Accept(done) { // throw error if voter < group otherwise continue spinning
+            if (voters < group) {
+              waitingVoters--;
+              #ifndef NOOUTPUT
+                  printer.print(id, Voter::States::Unblock, waitingVoters);
+              #endif
 
-      #ifndef NOOUTPUT
-          printer.print(id, Voter::States::Unblock, waitingVoters-1);
-      #endif
+              _Throw Failed();
+            }
+          }
+        } catch (uMutexFailure::RendezvousFailure& ) {
+          // another voter threw an error (b/c voter < group) we should throw too
+          waitingVoters--;
+          #ifndef NOOUTPUT
+              printer.print(id, Voter::States::Unblock, waitingVoters);
+          #endif
+
+          _Throw Failed();
+        } // try
+      } // for
    }
 
    waitingVoters--;
