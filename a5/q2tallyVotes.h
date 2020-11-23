@@ -10,6 +10,7 @@ _Monitor TallyVotes {
 #elif defined( INT )                         // internal scheduling monitor solution
 // includes for this kind of vote-tallier
 _Monitor TallyVotes {
+    uCondition waiting;
     // private declarations for this kind of vote-tallier
 #elif defined( INTB )                        // internal scheduling monitor solution with barging
 // includes for this kind of vote-tallier
@@ -19,8 +20,11 @@ _Monitor TallyVotes {
     void wait();                             // barging version of wait
     void signalAll();                        // unblock all waiting tasks
 #elif defined( AUTO )                        // automatic-signal monitor solution
+#include "AutomaticSignal.h"
 // includes for this kind of vote-tallier
 _Monitor TallyVotes {
+   AUTOMATIC_SIGNAL;
+   bool completed = false; // completed = waitingVoters == group || voters < group
     // private declarations for this kind of vote-tallier
 #elif defined( TASK )                        // internal/external scheduling task solution
 _Task TallyVotes {
@@ -35,10 +39,10 @@ _Task TallyVotes {
     enum TourKind : char { Picture = 'p', Statue = 's', GiftShop = 'g' };
     struct Tour { TourKind tourkind; unsigned int groupno; };
     TallyVotes( unsigned int voters, unsigned int group, Printer & printer );
-    Tour vote( unsigned int id, Ballot ballot );
-    void done();
-    void tally(); // tally votes when group is formed
+    _Mutex Tour vote( unsigned int id, Ballot ballot );
+    _Mutex void done();
   private: // common declarations
+    void tally(); // tally votes when group is formed
     unsigned int waitingVoters = 0; // number of voters waiting to go on tour
     unsigned int voters; // number of voters
     unsigned int group; // group size
@@ -50,20 +54,5 @@ _Task TallyVotes {
     TourKind destination; // what destination is the group going to
 };
 
-// TODO MOVE THIS INTB.cc when implementing
-// void TallyVotes::wait() {
-//     bench.wait();                            // wait until signalled
-//     while ( rand() % 2 == 0 ) {              // multiple bargers allowed
-//         try {
-//             _Accept( vote, done ) {          // accept barging callers
-//             } _Else {                        // do not wait if no callers
-//             } // _Accept
-//         } catch( uMutexFailure::RendezvousFailure & ) {}
-//     } // while
-// }
-
-// void TallyVotes::signalAll() {               // also useful
-//     while ( ! bench.empty() ) bench.signal();// drain the condition
-// }
-
+// common function amongst declaration
 #endif

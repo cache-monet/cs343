@@ -1,9 +1,6 @@
 #include "q2printer.h"
 #include "q2tallyVotes.h"
 #include "q2voter.h"
-#include <iostream>
-
-using namespace std;
 
 TallyVotes::TallyVotes(
    unsigned int voters,
@@ -11,8 +8,9 @@ TallyVotes::TallyVotes(
    Printer & printer
 ) : voters(voters), group(group), printer(printer) {} // TallyVotes
 
+
+// determine which tour got the most votes and increments the group number
 void TallyVotes::tally() {
-   // determine which tour got the most votes
    // note: using >= since tie breaker (g > p > s)
    if ( giftshopVotes >= pictureVotes &&  giftshopVotes >= statueVotes ) {
       destination = GiftShop;   
@@ -23,7 +21,8 @@ void TallyVotes::tally() {
    }
    pictureVotes = 0, statueVotes = 0, giftshopVotes = 0; // reset vote counter
    currentGroup++;
-}
+} // tally()
+
 
 TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
    if (voters < group ) _Throw Failed(); // check if there's enough voters
@@ -38,42 +37,43 @@ TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
    giftshopVotes += ballot.giftshop;
    waitingVoters++;
 
-    if (waitingVoters == group )
-    { // full tour
+   if ( waitingVoters == group )
+   { // full tour
       tally(); // count the collected votes
       Tour tour; tour.tourkind = destination; tour.groupno = currentGroup;
       #ifndef NOOUTPUT
           printer.print(id, Voter::States::Complete, tour); // create group
       #endif
+      completed = true;
    }
    else
    { // wait for others to vote and print blocked and unblock msgs
       #ifndef NOOUTPUT
-        printer.print(id, Voter::States::Block, waitingVoters);
+        WAITUNTIL(
+          completed,
+          printer.print(id, Voter::States::Block, waitingVoters),
+          printer.print(id, Voter::States::Unblock, waitingVoters-1)
+        ); // wake up when we fill a group or quorom failure
+      #else 
+        WAITUNTIL( completed , , ); // wake up when we fill a group or quorom failure
       #endif
 
-      for (;;) {
-        _Accept(done) {  // check for error if another voter terminated
-          if ( voters < group ) {
-            #ifndef NOOUTPUT
-               printer.print(id, Voter::States::Unblock, waitingVoters-1);
-            #endif
-             _Throw Failed(); 
-          }
-        }
-        _Else _Accept(vote) { break; }  /// wait until the another voter finish voting voting before progressing
+      if ( voters < group ) {
+        // EXIT();
+        _Throw Failed(); 
       }
-
-      #ifndef NOOUTPUT
-          printer.print(id, Voter::States::Unblock, waitingVoters-1);
-      #endif
    }
 
    waitingVoters--;
+   completed = !(waitingVoters == 0); // close the gate when all voters departed for tour
    Tour tour; tour.tourkind = destination; tour.groupno = currentGroup;
+
+   EXIT();
    return tour;
 }
 
 void TallyVotes::done() {
   voters--;
+  completed = (voters < group); // wake everyone if there's not enough people left
+  EXIT();
 }

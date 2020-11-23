@@ -3,8 +3,6 @@
 #include "q2voter.h"
 #include <iostream>
 
-using namespace std;
-
 TallyVotes::TallyVotes(
    unsigned int voters,
    unsigned int group,
@@ -52,28 +50,22 @@ TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
         printer.print(id, Voter::States::Block, waitingVoters);
       #endif
 
-      for (;;) {
-        _Accept(done) {  // check for error if another voter terminated
-          if ( voters < group ) {
-            #ifndef NOOUTPUT
-               printer.print(id, Voter::States::Unblock, waitingVoters-1);
-            #endif
-             _Throw Failed(); 
-          }
-        }
-        _Else _Accept(vote) { break; }  /// wait until the another voter finish voting voting before progressing
-      }
+      waiting.wait();
 
       #ifndef NOOUTPUT
           printer.print(id, Voter::States::Unblock, waitingVoters-1);
       #endif
+
+      if (voters < group ) _Throw Failed(); // check if there's enough voters after waiting up
    }
 
    waitingVoters--;
    Tour tour; tour.tourkind = destination; tour.groupno = currentGroup;
+   waiting.signal();
    return tour;
 }
 
 void TallyVotes::done() {
   voters--;
+  if (voters < group) waiting.signal(); // wake up failed voters
 }

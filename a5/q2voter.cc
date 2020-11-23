@@ -20,9 +20,7 @@ void Voter::main() {
         _Enable {
             for (unsigned int i = 0; i < nvotes; i++) {
 
-                #ifdef NOOUTPUT
-                    #define PRINT(...); // print start message
-                #else
+                #ifndef NOOUTPUT
                     printer.print(id, Start); // print start message
                 #endif
 
@@ -30,18 +28,14 @@ void Voter::main() {
                 TallyVotes::Tour tour = voteTallier.vote(id, cast());
                 yield( mprng( 4 ) ); // yield again
 
-                #ifdef NOOUTPUT
-                    #define PRINT(...); // going on tour
-                #else
+                #ifndef NOOUTPUT
                     printer.print(id, Going, tour); // going on tour
                 #endif
             } // for
         }  // Enable
 
     } catch (TallyVotes::Failed& ) {
-        #ifdef NOOUTPUT
-            #define PRINT(...);
-        #else
+        #ifndef NOOUTPUT
             printer.print(id, Failed);
         #endif
     } // try
@@ -52,9 +46,7 @@ void Voter::main() {
     voteTallier.done();
 #endif
 
-#ifdef NOOUTPUT
-    #define PRINT(...); // print terminated
-#else
+#ifndef NOOUTPUT
     printer.print(id, Terminated); // print terminated
 #endif
 
