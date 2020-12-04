@@ -1,0 +1,253 @@
+Test for invalid inputs
+    Test 1:
+        ./vote 0
+        Usage: ./voteTASK [ voters (> 0) | 'd' (default 6) [ group (> 0) | 'd' (default 3) [ votes (> 0) | 'd' (default 1) [ seed (> 0), | 'd' (default random) [ processors (> 0), | 'd' (default 1) ] ] ] ] ]
+        As expected the q2main correctly reinforced cli requirements for voters
+    Test 2
+        ./vote d 0
+        Usage: ./voteTASK [ voters (> 0) | 'd' (default 6) [ group (> 0) | 'd' (default 3) [ votes (> 0) | 'd' (default 1) [ seed (> 0), | 'd' (default random) [ processors (> 0), | 'd' (default 1) ] ] ] ] ]
+        As expected the q2main correctly reinforced cli requirements for  group
+    Test 3
+        ./vote d d 0
+        Usage: ./voteTASK [ voters (> 0) | 'd' (default 6) [ group (> 0) | 'd' (default 3) [ votes (> 0) | 'd' (default 1) [ seed (> 0), | 'd' (default random) [ processors (> 0), | 'd' (default 1) ] ] ] ] ]
+        As expected the q2main correctly reinforced cli requirements for votes
+    etc for other invalid test cases
+
+External scheduling tests
+    No failure Test:
+        ./vote 6 3 2 576707
+        V0      V1      V2      V3      V4      V5
+        ******* ******* ******* ******* ******* *******
+                                                S
+                                                V 1,0,2
+                                S               B 1
+                                V 2,1,0
+        S       S       S       B 2
+                        V 0,2,1
+                        C g     U 1             U 0
+                                G g 1
+                                S
+                                V 1,0,2
+                        G g 1   B 1
+        V 1,2,0         S
+        B 2     V 2,0,1
+        U 1     C p             U 0     S
+                                        V 2,0,1
+                G p 2                   B 1
+                S                               G g 1
+                        V 2,1,0                 S
+        G p 2           B 2
+        S
+        V 2,1,0
+        C p             U 1     G p 2
+        G p 3           G p 3   T       U 0
+                V 0,2,1 T
+                B 1                             V 0,2,1
+                                        G p 3   B 2
+        T                               S       D
+                                        V 2,0,1
+                U 0                     C s     U 1
+                G s 4
+                T                       G s 4
+                                        T       G s 4
+                                                T
+        *****************
+        All tours started
+
+        As expected all voters get to go on tour twice and each group has exactly 3 voters. Furthermore V0 completion is registered by V5 q2tallyVotesEXT.cc:L11
+
+    Quorum failure Test:
+        ./vote 7 4 1 1234
+        V0      V1      V2      V3      V4      V5      V6
+        ******* ******* ******* ******* ******* ******* *******
+                                        S
+                                        V 2,1,0
+                                S       B 1
+                                V 0,2,1
+        S               S       B 2             S
+                                                V 2,1,0
+        V 1,2,0                                 B 3
+        C s
+        G s 1   S               U 1     U 0     U 2     S
+        T               V 2,1,0 G s 1   G s 1
+                        B 1                     G s 1   V 0,2,1
+                V 2,0,1                                 B 2
+                B 3                     T
+                D               T
+                D                               T
+                D
+                U 2
+                X                                       U 1
+                        U 0                             X
+                T       X                               T
+                        T
+        *****************
+        All tours started
+
+        Program behaves according to program specification. No rendezvous failure as execeptional behavior in vote were handled q2tallyVotesEXT.cc:L63-70 and one quorum failure did not disrupt synchronization.
+
+Internal scheduling tests
+    Internal scheduling failure test
+        ./voteINT 7 4 1 341324
+        V0      V1      V2      V3      V4      V5      V6
+        ******* ******* ******* ******* ******* ******* *******
+                S
+                V 1,0,2
+                B 1                             S
+                                                V 1,2,0
+                                        S       B 2     S
+                                                        V 1,2,0
+        S                       S       V 2,1,0         B 3
+                U 2     S               C p     U 1
+        V 0,1,2 G p 1                   G p 1   G p 1   U 0
+        B 1     T               V 1,2,0         T       G p 1
+                        V 0,2,1 B 2     T
+        U 2             B 3                             T
+        X
+        T                       U 1
+                                X
+                        U 0     T
+                        X
+                        T
+        *****************
+        All tours started
+        Expected behavior quorum failure tasks still decrements waiting votes (q2tallyVotesINT.cc:L46). All failure voters are woken upon when voters < group L59. Voter works as expected correctly handling _Throw Failure from tallyVotes and terminating the program.
+
+
+Java Monitor tests
+    Java Monitor failure test
+        ./vote 7 4 1 23434
+        V0      V1      V2      V3      V4      V5      V6
+        ******* ******* ******* ******* ******* ******* *******
+                        S
+                        V 1,0,2
+                        B 1     S
+                                V 0,2,1
+                                B 2             S
+                                                V 0,2,1
+        S                                       B 3     S
+        V 2,0,1
+        C g     S               U 1             U 2
+        G g 1                   G g 1   S       G g 1   b 1 1
+                b 2 1   U 0                     T
+                V 0,2,1
+                B 1                                     V 1,2,0
+        T               G g 1   T       V 2,0,1         B 2
+                        T               B 3
+                                        U 2
+                                        X
+                                        T               U 1
+                U 0                                     X
+                X                                       T
+                T
+        *****************
+        All tours started
+
+        Program adheres to specifications. Multiple bargers are allowed and properly kept out while another group is in progress of going on tour. q2tallyVotesINTB.cc:L30-42. barger count is also correctly accounted for. Upon quorum failure all voters including bargers are woken up and proceed to _Throw L88.
+        Printer prints barger messages properly
+
+Automatic signal  tests
+    Automatic Signal failure test
+        ./vote 5 3 1 1
+        V0      V1      V2      V3      V4
+        ******* ******* ******* ******* *******
+        S
+        V 1,0,2
+        B 1     S
+                V 1,0,2
+        B 2     B 2             S       S
+                                V 1,2,0
+        U 1                     C g
+                U 0     S       G g 1   V 0,2,1
+        G g 1   G g 1           T       B 1
+                        V 2,1,0         B 1
+                T       B 2             B 2
+        T               B 2             B 2
+                        U 1
+                        X               U 0
+                        T               X
+                                        T
+        *****************
+        All tours started
+        
+        The Block message is correctly printed for each wait call in WAITUNTIL AutomaticSignal.h:L10. WAITUNTIL is correctly opened when (voters < group) and all signalled are awoken q2tallyVotesAUTO.cc:L61-62
+
+Task Test
+    Task failure test
+        ./vote 5 4 2 1
+        V0      V1      V2      V3      V4
+        ******* ******* ******* ******* *******
+        S
+        V 1,0,2
+        B 1     S
+                V 1,0,2
+                B 2             S       S
+                                V 1,2,0
+                        S       B 3     V 1,0,2
+        U 3     U 2                     C g
+        G g 1
+        S       G g 1           U 1
+                S               G g 1   U 0
+                        V 1,0,2 S
+                        B 1             G g 1
+        V 2,0,1                         S
+        B 2     V 1,2,0
+                B 3                     V 0,2,1
+        U 2     U 1     U 3             C g
+        G g 2           G g 2
+                G g 2   S               U 0
+                                V 2,1,0 G g 2
+                        V 0,1,2 B 1
+        T               B 2
+                T       D
+                        D       U 1
+                        U 0     X
+                        X               T
+                        D       T
+                        D
+                        T
+                        D
+        *****************
+        All tours started
+
+        There are exactly 5 D's (one for each voter). Quorum failure does not result in rendezvous failure or race condition (q2tallyVotesTASK.cc: L71, L75, L56-63). Routine is correctly stopped upon termination L15.
+        In addition as with all the other implementation printer workers properly, printing the correctly formatted for the right voter.
+
+
+Multi processor test
+    /vote 5 5 2 1 100
+    V0      V1      V2      V3      V4
+    ******* ******* ******* ******* *******
+    S
+    V 1,0,2
+    B 1     S
+            V 1,0,2
+            B 2             S       S
+                            V 1,2,0
+                    S       B 3     V 1,0,2
+                    V 1,0,2         B 4
+    U 4     U 3     C g
+    G g 1
+    S       G g 1           U 2
+            S       U 0     G g 1   U 1
+                            S       G g 1
+    V 2,0,1                         S
+    B 1             G g 1
+            V 1,2,0 S
+            B 2             V 0,1,2
+                            B 3     V 0,1,2
+                    V 1,0,2         B 4
+    U 4     U 3     C g     U 2
+    G g 2   G g 2   U 0     G g 2   U 1
+    T               D       T       G g 2
+                    G g 2
+            T       D
+                    D               T
+                    D
+                    T
+                    D
+    *****************
+    All tours started
+
+    As expected the program functions according to specification with Multiple processors; each group has exactly 5 voter and each voters vote attempts to vote twice before terminating; printer messages are displayed correctly.
+    
