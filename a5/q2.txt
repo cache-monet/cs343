@@ -1,0 +1,34 @@
+i.
+Single processor 
+EXT:        2.10u 0.05s 0:02.15r 32536kb
+INT:        1.60u 0.05s 0:01.65r 32536kb
+INTB:       4.28u 0.05s 0:04.40r 32876kb
+AUTO:       1.64u 0.03s 0:01.68r 32528kb
+TASK:       1.41u 0.02s 0:01.43r 32524kb
+
+EXT rtime is 0.05s longer than utime
+INT rtime is 0.05s longer than utime
+INTB rtime is 0.12s longer than utime
+AUTO rtime is 0.04s longer than utime
+TASK rtime is 0.02s longer than utime
+
+2 processors
+EXT:        2.08u 0.04s 0:02.11r 32788kb
+INT:        1.64u 0.03s 0:01.66r 32716kb
+INTB:       5.06u 0.06s 0:05.19r 32768kb
+AUTO:       1.55u 0.03s 0:01.58r 32724kb
+TASK:       1.36u 0.02s 0:01.38r 32632kb
+
+EXT rtime is 0.03s longer than utime
+INT rtime is 0.02s longer than utime
+INTB rtime is 0.11s longer than utime
+AUTO rtime is 0.03s longer than utime
+TASK rtime is 0.02s longer than utime
+
+ii.
+when more threads are added:
+    EXT saw a slight decrease 0.02s in u time and rtime decreased by 0.04s
+    INT saw a slight increase 0.04s utime and rtime increased by 0.01s
+    INTB saw a large increase 0.78s in utime  and 0.79s increase in rtime
+    AUTO saw a slight decrease 0.09s in utime and rtime decreased by 0.1s 
+    TASK saw a slight decrease 0.05s in utime and rtime decreased by 0.5s 

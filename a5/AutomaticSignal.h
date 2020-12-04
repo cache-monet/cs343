@@ -5,9 +5,9 @@
 
 #define WAITUNTIL(pred, before, after) \
     if (!pred) { \
-        before; \
         while( !blocked.empty() )  blocked.signal(); \
         do { \
+            before; \
             blocked.wait(); \
         } while (!pred); \
     } \

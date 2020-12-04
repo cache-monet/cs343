@@ -9,20 +9,6 @@ TallyVotes::TallyVotes(
    Printer & printer
 ) : voters(voters), group(group), printer(printer) {} // TallyVotes
 
-void TallyVotes::tally() {
-   // determine which tour got the most votes
-   // note: using >= since tie breaker (g > p > s)
-   if ( giftshopVotes >= pictureVotes &&  giftshopVotes >= statueVotes ) {
-      destination = GiftShop;   
-   } else if ( pictureVotes >= statueVotes) {
-      destination = Picture;
-   } else {
-      destination = Statue;
-   }
-   pictureVotes = 0, statueVotes = 0, giftshopVotes = 0; // reset vote counter
-   currentGroup++;
-}
-
 TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
    if (voters < group ) _Throw Failed(); // check if there's enough voters
 
@@ -56,7 +42,10 @@ TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
           printer.print(id, Voter::States::Unblock, waitingVoters-1);
       #endif
 
-      if (voters < group ) _Throw Failed(); // check if there's enough voters after waiting up
+      if (voters < group ) {
+         waitingVoters--;
+         _Throw Failed(); // check if there's enough voters after waiting up
+      }
    }
 
    waitingVoters--;

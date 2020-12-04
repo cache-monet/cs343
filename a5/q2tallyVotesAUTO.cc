@@ -8,22 +8,6 @@ TallyVotes::TallyVotes(
    Printer & printer
 ) : voters(voters), group(group), printer(printer) {} // TallyVotes
 
-
-// determine which tour got the most votes and increments the group number
-void TallyVotes::tally() {
-   // note: using >= since tie breaker (g > p > s)
-   if ( giftshopVotes >= pictureVotes &&  giftshopVotes >= statueVotes ) {
-      destination = GiftShop;   
-   } else if ( pictureVotes >= statueVotes) {
-      destination = Picture;
-   } else {
-      destination = Statue;
-   }
-   pictureVotes = 0, statueVotes = 0, giftshopVotes = 0; // reset vote counter
-   currentGroup++;
-} // tally()
-
-
 TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
    if (voters < group ) _Throw Failed(); // check if there's enough voters
 
@@ -59,7 +43,7 @@ TallyVotes::Tour TallyVotes::vote( unsigned int id, Ballot ballot ) {
       #endif
 
       if ( voters < group ) {
-        // EXIT();
+        waitingVoters--;
         _Throw Failed(); 
       }
    }
