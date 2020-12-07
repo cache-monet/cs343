@@ -3,6 +3,8 @@
 #include "printer.h"
 #include "nameserver.h"
 
+_Task Truck; // forward declare truck
+
 _Task BottlingPlant {
     Printer & prt;
     NameServer & nameServer;
@@ -12,6 +14,7 @@ _Task BottlingPlant {
     unsigned int maxStockPerFlavour;
     unsigned int timeBetweenShipments;
     bool shutdown = false; // factory shutdowned
+    Truck* truck;
     unsigned int supply[flavours]; // tracks supply for each flavor
     void main();
   public:

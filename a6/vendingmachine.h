@@ -29,7 +29,6 @@ _Task VendingMachine {
     _Nomutex unsigned int getId() const;
   private:
     Flavours purchased; // flavor purchased
-    WATCard* customer; // last student who purchased the flavor
 };
 
 #endif

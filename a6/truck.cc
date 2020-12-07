@@ -20,22 +20,21 @@ void Truck::main() {
   VendingMachine** machines = nameServer.getMachineList(); // get location of vending machine
   unsigned int cargo[flavours]; // initialize truck cargo
   unsigned int curVM = 0; // track the next vm to restock
-  for (;;) {
+  Main: for (;;) {
     yield(mprng(1, 10)); // coffee break
     // get soda from factory
     for (unsigned int i = 0; i < flavours; i++) cargo[i] = 0; // dump expired cargo
     try {
       plant.getShipment(cargo);
     } catch (BottlingPlant::Shutdown) {
-      break;
+      break Main;
     }
     unsigned int totalCargo = 0;
     for (unsigned int i = 0; i < flavours; i++) totalCargo += cargo[i];
     prt.print(Printer::Truck, 'P', totalCargo);
 
-    // restock vending machines 
-    unsigned int VMsRestocked = 0; // track how many vm we restocked
-    for (;;) {
+    // attempt a cycle of restocking vending machines 
+    RestockCycle: for (unsigned int VMsRestocked = 0; VMsRestocked < numVendingMachines; VMsRestocked++) {
       VendingMachine* vm = machines[curVM];
       unsigned int vmId = vm->getId();
       prt.print(Printer::Truck, 'd', vmId, totalCargo);
@@ -61,11 +60,9 @@ void Truck::main() {
         prt.print(Printer::Truck, 'X');
         yield(10);
       }
-      VMsRestocked++;
       curVM = (curVM + 1) % numVendingMachines;
-      if (totalCargo == 0 || VMsRestocked == numVendingMachines) break; // cycle complete
-    }
-    // deliver flavor
-  }
+      if (totalCargo == 0) break RestockCycle; // no more cargo creak cycle
+    } // for
+  } // for
   prt.print(Printer::Truck, 'F');
 }

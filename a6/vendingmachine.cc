@@ -13,20 +13,23 @@ VendingMachine::VendingMachine( Printer & prt, NameServer & nameServer, unsigned
 } // VendingMachine::VendingMachine
 
 void VendingMachine::buy(Flavours flavour, WATCard& card) {
-  purchased = flavour; customer = &card;
+  purchased = flavour;
   if (supply[(int)flavour] < 1) _Throw Stock(); // check if flavour is in stock
   if (mprng(5-1) == 0) { // 1 / 5 chance soda is free
     supply[(int)flavour]--;
     _Throw Free();
   }
   if (card.getBalance() < sodaCost) _Throw Funds(); // check if student have enough funds
+  card.withdraw(sodaCost); // debit purchase
 } // VendingMachine::buy
 
 unsigned int* VendingMachine::inventory() {
+  restocking = true;
   return supply;
 } // VendingMachine::inventory
 
 void VendingMachine::restocked() {
+  restocking = false; // restock complete
   return; // don't do anything here
 } // VendingMachine::restocked
 
@@ -42,22 +45,20 @@ _Nomutex unsigned int VendingMachine::getId() const {
 void VendingMachine::main() {
   nameServer.VMregister(this); // begins with registering self with nameserver
   prt.print(Printer::Vending, id, 'S', sodaCost);
-  try {
-    for (;;) {
+  for (;;) {
+    try {
       _Accept(~VendingMachine) {
         break;
       } or _Accept(inventory) { // starting restock
-        restocking = true;
         prt.print(Printer::Vending, id, 'r');
       } or _Accept(restocked) {
-        restocking = false; // restock complete
-      } or _When(!restocking) _Accept(buy) { // students can buy only when 
+        prt.print(Printer::Vending, id, 'R');
+      } or _When(!restocking) _Accept(buy) {
         // this only runs when buy terminates without throwing ie: successful purchase
-        customer->withdraw(sodaCost); // debit purchase
-        supply[(int)purchased] -= 1; // decrement stock
+        supply[(int)purchased]--; // decrement stock
         prt.print(Printer::Vending, id, 'B', purchased, supply[(int)purchased]);
       }
-    } // for
-  } catch(uMutexFailure::RendezvousFailure) {} // try
+    } catch(uMutexFailure::RendezvousFailure) {} // try
+  } // for
   prt.print(Printer::Vending, id, 'F');
 } // VendingMachine::main

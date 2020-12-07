@@ -10,8 +10,8 @@ _Task Groupoff {
     unsigned int numStudents;
     unsigned int sodaCost;
     unsigned int groupoffDelay;
-    std::vector<WATCard::FWATCard> futureGiftCards;
-    WATCard** giftCards; // store giftcards here so they don't get deleted
+    std::vector<WATCard::FWATCard> futures;
+    std::vector<WATCard*> giftCards; // stores giftcards on heap
     void main();
   public:
     Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay );

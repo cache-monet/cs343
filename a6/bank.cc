@@ -12,7 +12,6 @@ Bank::~Bank() {
 
 void Bank::deposit( unsigned int id, unsigned int amount ) {
   balances[id] += amount;
-
 } // Bank::deposit
 
 void Bank::withdraw( unsigned int id, unsigned int amount ) {

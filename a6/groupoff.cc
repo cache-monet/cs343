@@ -7,13 +7,13 @@ Groupoff::Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCo
   prt(prt),
   numStudents(numStudents),
   sodaCost(sodaCost),
-  groupoffDelay(groupoffDelay) {
-  giftCards = new WATCard*[numStudents];
+  groupoffDelay(groupoffDelay)
+{
 } // Groupoff::Groupoff
 
 WATCard::FWATCard Groupoff::giftCard() {
   WATCard::FWATCard futureGiftCard;
-  futureGiftCards.push_back(futureGiftCard);
+  futures.push_back(futureGiftCard);
   return futureGiftCard;
 } // Groupoff::giftCard
 
@@ -29,15 +29,15 @@ void Groupoff::main() {
     } _Else { // fill up giftcard with actual value
       yield(groupoffDelay); // wait to deliver giftcard
       // create watcard with soda cost value
-      WATCard* card = new WATCard;
-      card->deposit(sodaCost);
-      giftCards[i] = card;
+      giftCards.push_back(new WATCard());
+      giftCards.back()->deposit(sodaCost);
       // randomly choose one of the unfilled giftcard
-      unsigned int idx = mprng(futureGiftCards.size() - 1);
-      futureGiftCards[idx].delivery(card);
-      futureGiftCards.erase( futureGiftCards.begin() + idx ); // fulfilled remove future from list
-      prt.print(Printer::Groupoff, 'D', sodaCost);
-    }
-  }
+
+      unsigned int idx = mprng(futures.size() - 1);
+      futures[idx].delivery(giftCards.back()); // deliver created giftcards
+      prt.print(Printer::Groupoff, 'D', giftCards.back()->getBalance());
+      futures.erase( futures.begin() + idx); // fulfilled remove undelivered index from undelivered
+    } // _Accept
+  } // for
   prt.print(Printer::Groupoff, 'F');
 } // Groupoff::main

@@ -6,7 +6,7 @@
 class WATCard {
     WATCard( const WATCard & ) = delete;      // prevent copying
     WATCard & operator=( const WATCard & ) = delete;
-    unsigned int balance = 0; // watcard balance
+    unsigned int balance; // watcard balance
   public:
     typedef Future_ISM<WATCard *> FWATCard;   // future watcard pointer
     WATCard();
