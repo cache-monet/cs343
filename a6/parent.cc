@@ -10,7 +10,7 @@ void Parent::main() {
   prt.print(Printer::Parent, 'S');
   yield(100); // yield 100 times after starting
   for (;;) {
-    _Accept(Parent::~Parent) {
+    _Accept(~Parent) {
       break;
     } _Else {
       yield(parentalDelay); // deplay before each transfer

@@ -27,7 +27,6 @@ _Task WATCardOffice {
       WATCardOffice& office;
       Printer& prt;
       Bank& bank;
-      Printer& printer;
       void main();
      public:
       Courier(unsigned int id, WATCardOffice& office, Printer& printer, Bank& bank);

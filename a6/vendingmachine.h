@@ -5,17 +5,19 @@
 #include "nameserver.h"
 #include "watcard.h" 
 
+_Task NameServer; // forward declare NameServer
+
 _Task VendingMachine {
-    static const unsigned int flavors = 4; // number of flavors
+    static const unsigned int flavours = 4; // number of flavours
     Printer & prt;
     NameServer & nameServer;
     unsigned int id;
     unsigned int sodaCost;
-    unsigned int inventory[flavors]; // tracks inventory for each flavor
-    bool restocking = false; // truck is restocking machine
+    unsigned int supply[flavours]; // tracks supply for each flavor
+    bool restocking = false; // marks whether restock is in process
     void main();
   public:
-    enum Flavours { Blues, Classic, Rock, Jazz }; // flavours of soda
+    enum Flavours { Blues=0, Classic, Rock, Jazz }; // flavours of soda
     _Event Free {};                           // free, advertisement
     _Event Funds {};                          // insufficient funds
     _Event Stock {};                          // flavour out of stock
@@ -25,4 +27,9 @@ _Task VendingMachine {
     void restocked();
     _Nomutex unsigned int cost() const;
     _Nomutex unsigned int getId() const;
+  private:
+    Flavours purchased; // flavor purchased
+    WATCard* customer; // last student who purchased the flavor
 };
+
+#endif

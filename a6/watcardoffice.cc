@@ -7,15 +7,15 @@ WATCardOffice::WATCardOffice( Printer & prt, Bank & bank, unsigned int numCourie
   prt(prt), bank(bank), numCouriers(numCouriers) {
     // create fixed size courier pool
     couriers = new Courier*[numCouriers];
-    for (int i = 0; i < numCouriers; i++) {
-      couriers[i] = new WATCardOffice::Courier(i, *this, prt, bank)
+    for (unsigned int i = 0; i < numCouriers; i++) {
+      couriers[i] = new WATCardOffice::Courier(i, *this, prt, bank);
     }
 } //WATCardOffice::WATCardOffice
 
 void WATCardOffice::main() {
   prt.print(Printer::WATCardOffice, 'S');
   for (;;) {
-    _Accept(WATCardOffice::~WATCardOffice) {
+    _Accept(~WATCardOffice) {
       break;
     } or _Accept(create) {
       Job* added = jobs.back(); 
@@ -34,7 +34,7 @@ void WATCardOffice::main() {
   while (!jobs.empty()) { delete jobs.front();  jobs.pop(); } // cleanup jobs
   // cleanup couriers
   for (unsigned int i = 0; i < numCouriers; i++) _Accept(requestWork); // terminate couriers
-  for (unsigned int i = 0; i < numCouriers; i++) delete courier[i]; // free up courier memory
+  for (unsigned int i = 0; i < numCouriers; i++) delete couriers[i]; // free up courier memory
   delete[] couriers;
   prt.print(Printer::WATCardOffice, 'F');
 } // WATCardOffice::main
@@ -64,21 +64,21 @@ WATCardOffice::Courier::Courier(unsigned int id, WATCardOffice& office, Printer&
   id(id), office(office), prt(prt), bank(bank) {} // Courier::Courier
 
 void WATCardOffice::Courier::main() {
-  prt.print(Printer::Courier, 'S');
+  prt.print(Printer::Courier, id, 'S');
   for (;;) {
     _Accept(~Courier) {
       break;
     } _Else {
-      Job* job = office->requestWork();
+      Job* job = office.requestWork();
       if (job == NULL) break; // No more jobs left stop task
 
       // get money from bank and put it in the whatcard
       bank.withdraw(job->sid, job->amount);
       job->watcard->deposit(job->amount);
-      prt.print(Printer::Courier, 'T', job->sid, job->amount);
+      prt.print(Printer::Courier, id, 'T', job->sid, job->amount);
       //  1/6 chance of courier losing card
-      if (mprng(6- 1) == 0) { 
-        prt.print(Printer::Courier, 'L', job->sid);
+      if (mprng(6 - 1) == 0) { 
+        prt.print(Printer::Courier, id, 'L', job->sid);
         delete job->watcard;
         job->result.exception( new WATCardOffice::Lost() ); // insert exception into future
       } else {
@@ -87,5 +87,5 @@ void WATCardOffice::Courier::main() {
       delete job; // cleanup job isn't needed anymore
     }
   }
-  prt.print(Printer::Courier, 'F');
+  prt.print(Printer::Courier, id, 'F');
 } // Courier::main

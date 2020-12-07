@@ -1,10 +1,17 @@
 #include <iostream>
 #include <string>
+
 #include "config.h"
 #include "MPRNG.h"
+
 #include "bank.h"
+#include "bottlingplant.h"
+#include "groupoff.h"
+#include "nameserver.h"
 #include "parent.h"
 #include "printer.h"
+#include "vendingmachine.h"
+#include "watcardoffice.h"
 
 using namespace std;
 
@@ -32,8 +39,30 @@ int main( int argc, char *argv[] ) {
   processConfigFile(configFile.c_str(), params );
   uProcessor p[1] __attribute__(( unused )); // add another processor for parallelism
 
-  Printer printer(params.numStudents, params.numVendingMachines, params.numCouriers);
+  Printer prt(params.numStudents, params.numVendingMachines, params.numCouriers);
   Bank bank(params.numStudents);
-  Parent(printer, bank, params.numStudents, params.parentalDelay);
+  Parent(prt, bank, params.numStudents, params.parentalDelay);
+  WATCardOffice office(prt, bank, params.numCouriers);
+
+  // Groupoff groupoff(prt, params.numStudents, params.sodaCost, params.groupoffDelay);
+  NameServer nameServer(prt, params.numVendingMachines, params.numStudents);
+  // create vending machines
+  // cleanup
+  BottlingPlant* plant = new BottlingPlant(
+    prt,
+    nameServer,
+    params.numVendingMachines,
+    params.maxShippedPerFlavour,
+    params.maxStockPerFlavour,
+    params.timeBetweenShipments
+  );
+
+  VendingMachine** vms = new VendingMachine* [params.numVendingMachines]; 
+  for (unsigned int i = 0; i < params.numVendingMachines; i++) vms[i] = new VendingMachine(prt, nameServer, i, params.sodaCost);
+
+  delete plant;
+
+  for (unsigned int i = 0; i < params.numVendingMachines; i++) delete vms[i];
+  delete[] vms;
   return 0;
 }

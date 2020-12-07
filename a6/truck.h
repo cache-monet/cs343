@@ -6,6 +6,7 @@
 #include "bottlingplant.h"
 
 _Task Truck {
+    static const unsigned int flavours = 4; // number of flavours
     Printer & prt;
     NameServer & nameServer;
     BottlingPlant & plant;
@@ -16,5 +17,4 @@ _Task Truck {
     Truck( Printer & prt, NameServer & nameServer, BottlingPlant & plant,
            unsigned int numVendingMachines, unsigned int maxStockPerFlavour );
 };
-
 #endif
