@@ -3,6 +3,7 @@
 
 #include "printer.h"
 #include "vendingmachine.h"
+#include <vector>
 
 _Task VendingMachine; // forward declare VendingMachine
 

@@ -28,8 +28,7 @@ void BottlingPlant::getShipment(unsigned int cargo[]) {
 
 void BottlingPlant::main() {
   prt.print(Printer::BottlingPlant, 'S');
-  // Truck* truck = new Truck(prt, nameServer, *this, numVendingMachines, maxStockPerFlavour);
-  truck = new Truck(prt, nameServer, *this, numVendingMachines, maxStockPerFlavour);
+  Truck* truck = new Truck(prt, nameServer, *this, numVendingMachines, maxStockPerFlavour);
   for (;;) {
     _Accept(~BottlingPlant) {
       break;
@@ -52,7 +51,7 @@ void BottlingPlant::main() {
   try {
     _Accept(getShipment); // accept final shipment
   } catch (uMutexFailure::RendezvousFailure) {} // try
-  if (truck != nullptr) delete truck; // wait for truck to complete
+  delete truck; // wait for truck to complete
 
   prt.print(Printer::BottlingPlant, 'F');
 } // BottlingPlant::main

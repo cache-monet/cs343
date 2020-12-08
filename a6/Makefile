@@ -2,8 +2,7 @@ CXX = u++ # compiler
 CXXFLAGS = -g -multi -O2 -std=c++11 -Wall -Wextra -MMD  # compiler flags
 MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}	# makefile name
 
-# OBJECTS1 = bank.o bottlingplant.o config.o groupoff.o nameserver.o parent.o printer.o student.o truck.o vendingmachine.o watcard.o watcardoffice.o soda.o
-OBJECTS1 = bank.o config.o  parent.o printer.o soda.o watcard.o watcardoffice.o
+OBJECTS1 = bank.o bottlingplant.o config.o groupoff.o nameserver.o parent.o printer.o soda.o student.o truck.o vendingmachine.o watcard.o watcardoffice.o
 EXEC1 = soda
 
 OBJECTS = ${OBJECTS1}						# all object files

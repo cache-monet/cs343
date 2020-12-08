@@ -64,7 +64,8 @@ int main( int argc, char *argv[] ) {
   for (unsigned int i = 0; i < params.numStudents; i++) {
     students[i] = new Student(prt, nameServer, office, groupoff, i, params.maxPurchases);
   }
-  // // wait for students to finish
+
+  // wait for students to finish
   for (unsigned int i = 0; i < params.numStudents; i++) delete students[i];
   delete[] students;
 
